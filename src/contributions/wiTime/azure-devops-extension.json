@@ -1,0 +1,102 @@
+{
+    "manifestVersion": 1,
+    "id": "wiTimeReport",
+    "publisher": "OneLuckiDev",
+    "version": "0.0.1",
+    "name": "Work Item Time",
+    "description": "This will give you insights in to who is approving the Pull Requests for your repository.",
+    "public": true,
+    "categories": [
+        "Azure Repos"
+    ],
+    "tags": [
+        "pull request",
+        "approval",
+        "report"
+    ],
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "icons": {
+        "default": "logo.png"
+    },
+    "content": {
+        "details": {
+            "path": "overview.md"
+        },
+        "license": {
+            "path": "LICENSE"
+        }
+    },
+    "files": [
+        {
+            "path": "static",
+            "addressable": true
+        },
+        {
+            "path": "dist",
+            "addressable": true
+        },
+        {
+            "path": "images/reviewerVote.JPG",
+            "addressable": true
+        },
+        {
+            "path": "images/targetBranches.JPG",
+            "addressable": true
+        },
+        {
+            "path": "images/trendChart.JPG",
+            "addressable": true
+        },
+        {
+            "path": "images/repoHub.PNG",
+            "addressable": true
+        }
+    ],
+    "badges": [
+        {
+            "href": "https://oneluckidev.visualstudio.com/OneLuckiDev/_apis/build/status/jeffpriz.devops-pr-stats?branchName=main",
+            "uri": "https://oneluckidev.visualstudio.com/OneLuckiDev/_apis/build/status/jeffpriz.devops-pr-stats?branchName=main",
+            "description": "Build for this extension run in Azure DevOps"
+        }
+    ],
+    "contributions": [
+        {
+            "id": "onelucki-pr-completion-report",
+            "type": "ms.vss-web.hub",
+            "description": "Hub to show stats and information about the Pull Request completions in this repository.",
+            "targets": [
+                "ms.vss-code-web.code-hub-group"
+            ],
+            "properties": {
+                "name": "PR Completion Stats",
+                "order": 100,
+                "icon": "asset://static/barIcon.png",
+                "uri": "dist/PRInfo/context.html"
+            }
+        }
+    ],
+    "scopes": [
+        "vso.code",
+        "vso.code_status"
+    ],
+    "links": {
+        "support": {
+            "uri": "https://github.com/jeffpriz/devops-pr-stats/issues"
+        },
+        "repository": {
+            "uri": "https://github.com/jeffpriz/devops-pr-stats"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "uri": "https://github.com/jeffpriz/devops-pr-stats"
+    },
+    "branding": {
+        "color": "rgb(27,160,225)",
+        "theme": "dark"
+    }
+}

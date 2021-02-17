@@ -2,16 +2,16 @@
     "manifestVersion": 1,
     "id": "wiTimeReport",
     "publisher": "OneLuckiDev",
-    "version": "0.0.1",
-    "name": "Work Item Time",
+    "version": "0.1.32",
+    "name": "Work Item State Time",
     "description": "This will give you insights in to who is approving the Pull Requests for your repository.",
-    "public": true,
+    "public": false,
     "categories": [
-        "Azure Repos"
+        "Azure Boards"
     ],
     "tags": [
-        "pull request",
-        "approval",
+        "backlog state",
+        "cycle time",
         "report"
     ],
     "targets": [
@@ -65,35 +65,35 @@
     ],
     "contributions": [
         {
-            "id": "onelucki-pr-completion-report",
+            "id": "onelucki-wi-wait-time",
             "type": "ms.vss-web.hub",
-            "description": "Hub to show stats and information about the Pull Request completions in this repository.",
+            "description": "Hub to show Work Item time in different states.",
             "targets": [
-                "ms.vss-code-web.code-hub-group"
+                "ms.vss-work-web.work-hub-group"
             ],
             "properties": {
-                "name": "PR Completion Stats",
-                "order": 100,
+                "name": "Work Item State Time",
+                "order": 150,
                 "icon": "asset://static/barIcon.png",
-                "uri": "dist/PRInfo/context.html"
+                "uri": "dist/wiTime/context.html"
             }
         }
     ],
     "scopes": [
-        "vso.code",
-        "vso.code_status"
+        "vso.work",
+        "vso.project"
     ],
     "links": {
         "support": {
-            "uri": "https://github.com/jeffpriz/devops-pr-stats/issues"
+            "uri": "https://github.com/jeffpriz/ado-wait-work-time/issues"
         },
         "repository": {
-            "uri": "https://github.com/jeffpriz/devops-pr-stats"
+            "uri": "https://github.com/jeffpriz/ado-wait-work-time"
         }
     },
     "repository": {
         "type": "git",
-        "uri": "https://github.com/jeffpriz/devops-pr-stats"
+        "uri": "https://github.com/jeffpriz/ado-wait-work-time"
     },
     "branding": {
         "color": "rgb(27,160,225)",

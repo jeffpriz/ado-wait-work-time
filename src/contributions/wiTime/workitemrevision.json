@@ -1,0 +1,771 @@
+{
+    "count": 9,
+    "value": [
+        {
+            "id": 547,
+            "rev": 1,
+            "fields": {
+                "System.WorkItemType": "User Story",
+                "System.State": "New",
+                "System.Reason": "New",
+                "System.AssignedTo": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CreatedDate": "2019-12-18T17:16:43.027Z",
+                "System.CreatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.ChangedDate": "2019-12-18T17:16:43.027Z",
+                "System.ChangedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CommentCount": 0,
+                "System.TeamProject": "CCC2018",
+                "System.AreaPath": "CCC2018",
+                "System.IterationPath": "CCC2018\\Iteration 1",
+                "System.BoardColumnDone": false,
+                "Microsoft.VSTS.Common.Priority": 2,
+                "Microsoft.VSTS.Common.ValueArea": "Business",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column.Done": false,
+                "System.Title": "test jeffs story",
+                "System.BoardColumn": "New",
+                "Microsoft.VSTS.Common.StateChangeDate": "2019-12-18T17:16:43.027Z",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column": "New"
+            },
+            "url": "https://dev.azure.com/oneluckidev/5e26bfc3-6842-4e60-89e6-88a0ecbde71d/_apis/wit/workItems/547/revisions/1"
+        },
+        {
+            "id": 547,
+            "rev": 2,
+            "fields": {
+                "System.WorkItemType": "User Story",
+                "System.State": "Active",
+                "System.Reason": "Implementation started",
+                "System.AssignedTo": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CreatedDate": "2019-12-18T17:16:43.027Z",
+                "System.CreatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.ChangedDate": "2019-12-18T17:16:48.75Z",
+                "System.ChangedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CommentCount": 0,
+                "System.TeamProject": "CCC2018",
+                "System.AreaPath": "CCC2018",
+                "System.IterationPath": "CCC2018\\Iteration 1",
+                "System.BoardColumnDone": false,
+                "Microsoft.VSTS.Common.Priority": 2,
+                "Microsoft.VSTS.Common.ActivatedDate": "2019-12-18T17:16:48.75Z",
+                "Microsoft.VSTS.Common.ActivatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "Microsoft.VSTS.Common.ValueArea": "Business",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column.Done": false,
+                "Microsoft.VSTS.Common.StateChangeDate": "2019-12-18T17:16:48.75Z",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column": "Active",
+                "System.BoardColumn": "Active",
+                "System.Title": "test jeffs story"
+            },
+            "url": "https://dev.azure.com/oneluckidev/5e26bfc3-6842-4e60-89e6-88a0ecbde71d/_apis/wit/workItems/547/revisions/2"
+        },
+        {
+            "id": 547,
+            "rev": 3,
+            "fields": {
+                "System.WorkItemType": "User Story",
+                "System.State": "Active",
+                "System.Reason": "Implementation started",
+                "System.AssignedTo": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CreatedDate": "2019-12-18T17:16:43.027Z",
+                "System.CreatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.ChangedDate": "2020-11-19T22:14:24.217Z",
+                "System.ChangedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CommentCount": 0,
+                "System.TeamProject": "CCC2018",
+                "System.AreaPath": "CCC2018",
+                "System.IterationPath": "CCC2018\\Iteration 1",
+                "System.Title": "update homepage",
+                "System.BoardColumnDone": false,
+                "Microsoft.VSTS.Common.Priority": 2,
+                "Microsoft.VSTS.Common.ActivatedDate": "2019-12-18T17:16:48.75Z",
+                "Microsoft.VSTS.Common.ActivatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "Microsoft.VSTS.Common.ValueArea": "Business",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column.Done": false,
+                "Microsoft.VSTS.Common.StateChangeDate": "2019-12-18T17:16:48.75Z",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column": "Active",
+                "System.BoardColumn": "Active"
+            },
+            "url": "https://dev.azure.com/oneluckidev/5e26bfc3-6842-4e60-89e6-88a0ecbde71d/_apis/wit/workItems/547/revisions/3"
+        },
+        {
+            "id": 547,
+            "rev": 4,
+            "fields": {
+                "System.WorkItemType": "User Story",
+                "System.State": "Active",
+                "System.Reason": "Implementation started",
+                "System.AssignedTo": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CreatedDate": "2019-12-18T17:16:43.027Z",
+                "System.CreatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.ChangedDate": "2021-02-15T20:11:29.62Z",
+                "System.ChangedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CommentCount": 0,
+                "System.TeamProject": "CCC2018",
+                "System.AreaPath": "CCC2018",
+                "System.IterationPath": "CCC2018\\Iteration 1",
+                "System.Title": "update homepage",
+                "System.BoardColumnDone": false,
+                "Microsoft.VSTS.Common.Priority": 2,
+                "Microsoft.VSTS.Common.ActivatedDate": "2019-12-18T17:16:48.75Z",
+                "Microsoft.VSTS.Common.ActivatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "Microsoft.VSTS.Common.ValueArea": "Business",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column.Done": false,
+                "WEF_ECF1A917B9694B4B8E97BE6CB5739C26_Kanban.Column.Done": false,
+                "System.BoardColumn": "WildColumn",
+                "Microsoft.VSTS.Common.StateChangeDate": "2019-12-18T17:16:48.75Z",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column": "Active",
+                "WEF_ECF1A917B9694B4B8E97BE6CB5739C26_Kanban.Column": "WildColumn"
+            },
+            "url": "https://dev.azure.com/oneluckidev/5e26bfc3-6842-4e60-89e6-88a0ecbde71d/_apis/wit/workItems/547/revisions/4"
+        },
+        {
+            "id": 547,
+            "rev": 5,
+            "fields": {
+                "System.WorkItemType": "User Story",
+                "System.State": "Active",
+                "System.Reason": "Implementation started",
+                "System.AssignedTo": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CreatedDate": "2019-12-18T17:16:43.027Z",
+                "System.CreatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.ChangedDate": "2021-02-15T20:12:44.29Z",
+                "System.ChangedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CommentCount": 0,
+                "System.TeamProject": "CCC2018",
+                "System.AreaPath": "CCC2018",
+                "System.IterationPath": "CCC2018\\Iteration 1",
+                "System.Title": "update homepage",
+                "System.BoardColumnDone": false,
+                "Microsoft.VSTS.Common.Priority": 2,
+                "Microsoft.VSTS.Common.ActivatedDate": "2019-12-18T17:16:48.75Z",
+                "Microsoft.VSTS.Common.ActivatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "Microsoft.VSTS.Common.ValueArea": "Business",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column.Done": false,
+                "WEF_ECF1A917B9694B4B8E97BE6CB5739C26_Kanban.Column.Done": false,
+                "Microsoft.VSTS.Common.StackRank": 1750000000.0,
+                "System.BoardColumn": "WildColumn",
+                "Microsoft.VSTS.Common.StateChangeDate": "2019-12-18T17:16:48.75Z",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column": "Active",
+                "WEF_ECF1A917B9694B4B8E97BE6CB5739C26_Kanban.Column": "WildColumn"
+            },
+            "url": "https://dev.azure.com/oneluckidev/5e26bfc3-6842-4e60-89e6-88a0ecbde71d/_apis/wit/workItems/547/revisions/5"
+        },
+        {
+            "id": 547,
+            "rev": 6,
+            "fields": {
+                "System.WorkItemType": "User Story",
+                "System.State": "Resolved",
+                "System.Reason": "Code complete and unit tests pass",
+                "System.AssignedTo": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CreatedDate": "2019-12-18T17:16:43.027Z",
+                "System.CreatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.ChangedDate": "2021-02-17T21:41:46.717Z",
+                "System.ChangedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CommentCount": 0,
+                "System.TeamProject": "CCC2018",
+                "System.AreaPath": "CCC2018",
+                "System.IterationPath": "CCC2018\\Iteration 1",
+                "System.Title": "update homepage",
+                "System.BoardColumnDone": false,
+                "Microsoft.VSTS.Common.Priority": 2,
+                "Microsoft.VSTS.Common.ActivatedDate": "2019-12-18T17:16:48.75Z",
+                "Microsoft.VSTS.Common.ActivatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "Microsoft.VSTS.Common.ResolvedDate": "2021-02-17T21:41:46.717Z",
+                "Microsoft.VSTS.Common.ResolvedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "Microsoft.VSTS.Common.ValueArea": "Business",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column.Done": false,
+                "WEF_ECF1A917B9694B4B8E97BE6CB5739C26_Kanban.Column.Done": false,
+                "System.BoardColumn": "Resolved",
+                "Microsoft.VSTS.Common.StateChangeDate": "2021-02-17T21:41:46.717Z",
+                "WEF_ECF1A917B9694B4B8E97BE6CB5739C26_Kanban.Column": "Resolved",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column": "Deploy Prod",
+                "Microsoft.VSTS.Common.StackRank": 1750000000.0
+            },
+            "url": "https://dev.azure.com/oneluckidev/5e26bfc3-6842-4e60-89e6-88a0ecbde71d/_apis/wit/workItems/547/revisions/6"
+        },
+        {
+            "id": 547,
+            "rev": 7,
+            "fields": {
+                "System.WorkItemType": "User Story",
+                "System.State": "Resolved",
+                "System.Reason": "Code complete and unit tests pass",
+                "System.AssignedTo": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CreatedDate": "2019-12-18T17:16:43.027Z",
+                "System.CreatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.ChangedDate": "2021-02-17T21:41:47.05Z",
+                "System.ChangedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CommentCount": 0,
+                "System.TeamProject": "CCC2018",
+                "System.AreaPath": "CCC2018",
+                "System.IterationPath": "CCC2018\\Iteration 1",
+                "System.Title": "update homepage",
+                "System.BoardColumnDone": false,
+                "Microsoft.VSTS.Common.Priority": 2,
+                "Microsoft.VSTS.Common.ActivatedDate": "2019-12-18T17:16:48.75Z",
+                "Microsoft.VSTS.Common.ActivatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "Microsoft.VSTS.Common.ResolvedDate": "2021-02-17T21:41:46.717Z",
+                "Microsoft.VSTS.Common.ResolvedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "Microsoft.VSTS.Common.StackRank": 1117187500.0,
+                "Microsoft.VSTS.Common.ValueArea": "Business",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column.Done": false,
+                "WEF_ECF1A917B9694B4B8E97BE6CB5739C26_Kanban.Column.Done": false,
+                "System.BoardColumn": "Resolved",
+                "Microsoft.VSTS.Common.StateChangeDate": "2021-02-17T21:41:46.717Z",
+                "WEF_ECF1A917B9694B4B8E97BE6CB5739C26_Kanban.Column": "Resolved",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column": "Deploy Prod"
+            },
+            "url": "https://dev.azure.com/oneluckidev/5e26bfc3-6842-4e60-89e6-88a0ecbde71d/_apis/wit/workItems/547/revisions/7"
+        },
+        {
+            "id": 547,
+            "rev": 8,
+            "fields": {
+                "System.WorkItemType": "User Story",
+                "System.State": "Resolved",
+                "System.Reason": "Code complete and unit tests pass",
+                "System.AssignedTo": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CreatedDate": "2019-12-18T17:16:43.027Z",
+                "System.CreatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.ChangedDate": "2021-02-18T14:55:46.837Z",
+                "System.ChangedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CommentCount": 0,
+                "System.TeamProject": "CCC2018",
+                "System.AreaPath": "CCC2018",
+                "System.IterationPath": "CCC2018\\Iteration 1",
+                "System.Title": "update homepage",
+                "System.BoardColumnDone": false,
+                "Microsoft.VSTS.Common.Priority": 2,
+                "Microsoft.VSTS.Common.ActivatedDate": "2019-12-18T17:16:48.75Z",
+                "Microsoft.VSTS.Common.ActivatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "Microsoft.VSTS.Common.ResolvedDate": "2021-02-17T21:41:46.717Z",
+                "Microsoft.VSTS.Common.ResolvedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "Microsoft.VSTS.Common.StackRank": 1117187500.0,
+                "Microsoft.VSTS.Common.ValueArea": "Business",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column.Done": false,
+                "WEF_ECF1A917B9694B4B8E97BE6CB5739C26_Kanban.Column.Done": false,
+                "System.BoardColumn": "Resolved",
+                "Microsoft.VSTS.Common.StateChangeDate": "2021-02-17T21:41:46.717Z",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column": "Deploy UAT B",
+                "WEF_ECF1A917B9694B4B8E97BE6CB5739C26_Kanban.Column": "Resolved"
+            },
+            "url": "https://dev.azure.com/oneluckidev/5e26bfc3-6842-4e60-89e6-88a0ecbde71d/_apis/wit/workItems/547/revisions/8"
+        },
+        {
+            "id": 547,
+            "rev": 9,
+            "fields": {
+                "System.AreaPath": "CCC2018",
+                "System.TeamProject": "CCC2018",
+                "System.IterationPath": "CCC2018\\Iteration 1",
+                "System.WorkItemType": "User Story",
+                "System.State": "Closed",
+                "System.Reason": "Acceptance tests pass",
+                "System.AssignedTo": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CreatedDate": "2019-12-18T17:16:43.027Z",
+                "System.CreatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.ChangedDate": "2021-02-18T16:06:41.973Z",
+                "System.ChangedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "System.CommentCount": 0,
+                "System.Title": "update homepage",
+                "System.BoardColumn": "Closed",
+                "System.BoardColumnDone": false,
+                "Microsoft.VSTS.Common.ClosedDate": "2021-02-18T16:06:41.973Z",
+                "Microsoft.VSTS.Common.ClosedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "Microsoft.VSTS.Common.Priority": 2,
+                "Microsoft.VSTS.Common.StateChangeDate": "2021-02-18T16:06:41.973Z",
+                "Microsoft.VSTS.Common.ActivatedDate": "2019-12-18T17:16:48.75Z",
+                "Microsoft.VSTS.Common.ActivatedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "Microsoft.VSTS.Common.ResolvedDate": "2021-02-17T21:41:46.717Z",
+                "Microsoft.VSTS.Common.ResolvedBy": {
+                    "displayName": "Jeff Przylucki",
+                    "url": "https://spsprodeus24.vssps.visualstudio.com/Ae4dbde5c-4fe6-4e86-94e3-0f0858a68edb/_apis/Identities/8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "_links": {
+                        "avatar": {
+                            "href": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                        }
+                    },
+                    "id": "8c12ab84-bfaf-4395-8cd0-e8f1c32d1c01",
+                    "uniqueName": "jeffpriz@hotmail.com",
+                    "imageUrl": "https://dev.azure.com/oneluckidev/_apis/GraphProfile/MemberAvatars/msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw",
+                    "descriptor": "msa.YWJkZjFhOWYtYzgyNS03NWVkLWE0NDktNWY3NWM4NDUwZTMw"
+                },
+                "Microsoft.VSTS.Common.StackRank": 1117187500.0,
+                "Microsoft.VSTS.Common.ValueArea": "Business",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column": "Closed",
+                "WEF_0A9FE107D2E04BDC8FF2943E50C90CE5_Kanban.Column.Done": false,
+                "WEF_ECF1A917B9694B4B8E97BE6CB5739C26_Kanban.Column": "Closed",
+                "WEF_ECF1A917B9694B4B8E97BE6CB5739C26_Kanban.Column.Done": false
+            },
+            "url": "https://dev.azure.com/oneluckidev/5e26bfc3-6842-4e60-89e6-88a0ecbde71d/_apis/wit/workItems/547/revisions/9"
+        }
+    ]
+}

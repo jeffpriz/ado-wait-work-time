@@ -15,3 +15,66 @@
   {
       width: 500px;
   }
+
+  .selectionCard
+  {
+      min-height: 130px;
+  }
+  .list-example-row {
+    padding: 0px 12px;
+}
+
+.boardColumnCard
+{
+    min-height: 310px;
+    
+    width: 100%;
+}
+.listColumnCard{
+    min-width:450px;
+    width:40%;
+}
+.categoryColumnCard
+{
+    min-width: 300px;
+    width: 30%;
+}
+
+.cat-Work 
+{
+    background-color:lightblue;
+}
+.cat-NotSet
+{
+    padding: auto;  
+}
+.cat-Wait
+{
+    background-color:lemonchiffon;
+}
+
+.hiddenButton
+{
+    display:none;
+}
+
+.cat-wait-header
+{
+    background-color:lemonchiffon;
+    width: 100%;
+    
+}
+.cat-work-header
+{
+    background-color:lightblue;
+    width: 100%;
+    
+}
+.cat-area
+{
+    height: 200px;
+}
+.cat-table
+{
+    width: 100%;
+}

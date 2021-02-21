@@ -2,8 +2,8 @@
     "manifestVersion": 1,
     "id": "wiTimeReport",
     "publisher": "OneLuckiDev",
-    "version": "0.1.32",
-    "name": "Work Item State Time",
+    "version": "0.1.132",
+    "name": "Work Item Flow Efficiency",
     "description": "This will give you insights in to who is approving the Pull Requests for your repository.",
     "public": false,
     "categories": [
@@ -72,7 +72,7 @@
                 "ms.vss-work-web.work-hub-group"
             ],
             "properties": {
-                "name": "Work Item State Time",
+                "name": "Work Item Flow Efficiency",
                 "order": 150,
                 "icon": "asset://static/barIcon.png",
                 "uri": "dist/wiTime/context.html"

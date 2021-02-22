@@ -1,0 +1,137 @@
+{
+    "count": 12,
+    "value": [
+        {
+            "referenceName": "EntScrum-Inherited.TestCase",
+            "name": "Test Case",
+            "description": "Server-side data for a set of steps to be tested.",
+            "url": "https://dev.azure.com/entcu/_apis/work/processes/e3ce0f95-e3cc-43b5-b12f-c8830ab4002b/workItemTypes/EntScrum-Inherited.TestCase",
+            "customization": "inherited",
+            "color": "FF9D00",
+            "icon": "icon_test_case",
+            "isDisabled": false,
+            "inherits": "Microsoft.VSTS.WorkItemTypes.TestCase"
+        },
+        {
+            "referenceName": "EntScrum-Inherited.Feature",
+            "name": "Feature",
+            "description": "Tracks a feature that will be released with the product",
+            "url": "https://dev.azure.com/entcu/_apis/work/processes/e3ce0f95-e3cc-43b5-b12f-c8830ab4002b/workItemTypes/EntScrum-Inherited.Feature",
+            "customization": "inherited",
+            "color": "773B93",
+            "icon": "icon_clipboard",
+            "isDisabled": false,
+            "inherits": "Microsoft.VSTS.WorkItemTypes.Feature"
+        },
+        {
+            "referenceName": "EntScrum.RiskAssessment",
+            "name": "Risk Assessment",
+            "description": "Risk Assessments for new systems, applications, changes or features.",
+            "url": "https://dev.azure.com/entcu/_apis/work/processes/e3ce0f95-e3cc-43b5-b12f-c8830ab4002b/workItemTypes/EntScrum.RiskAssessment",
+            "customization": "custom",
+            "color": "339947",
+            "icon": "icon_list",
+            "isDisabled": false,
+            "inherits": null
+        },
+        {
+            "referenceName": "EntScrum-Inherited.Impediment",
+            "name": "Impediment",
+            "description": "Tracks an obstacle to progress.",
+            "url": "https://dev.azure.com/entcu/_apis/work/processes/e3ce0f95-e3cc-43b5-b12f-c8830ab4002b/workItemTypes/EntScrum-Inherited.Impediment",
+            "customization": "inherited",
+            "color": "FF9D00",
+            "icon": "icon_clipboard",
+            "isDisabled": false,
+            "inherits": "Microsoft.VSTS.WorkItemTypes.Impediment"
+        },
+        {
+            "referenceName": "EntScrum-Inherited.TestPlan",
+            "name": "Test Plan",
+            "description": "Tracks test activities for a specific milestone or release.",
+            "url": "https://dev.azure.com/entcu/_apis/work/processes/e3ce0f95-e3cc-43b5-b12f-c8830ab4002b/workItemTypes/EntScrum-Inherited.TestPlan",
+            "customization": "inherited",
+            "color": "FF9D00",
+            "icon": "icon_test_plan",
+            "isDisabled": false,
+            "inherits": "Microsoft.VSTS.WorkItemTypes.TestPlan"
+        },
+        {
+            "referenceName": "EntScrum-Inherited.Task",
+            "name": "Task",
+            "description": "Tracks work that needs to be done.",
+            "url": "https://dev.azure.com/entcu/_apis/work/processes/e3ce0f95-e3cc-43b5-b12f-c8830ab4002b/workItemTypes/EntScrum-Inherited.Task",
+            "customization": "inherited",
+            "color": "F2CB1D",
+            "icon": "icon_clipboard",
+            "isDisabled": false,
+            "inherits": "Microsoft.VSTS.WorkItemTypes.Task"
+        },
+        {
+            "referenceName": "EntScrum-Inherited.Defect",
+            "name": "Defect",
+            "description": "Describes a divergence between required and actual behavior, and tracks the work done to correct the defect and verify the correction.",
+            "url": "https://dev.azure.com/entcu/_apis/work/processes/e3ce0f95-e3cc-43b5-b12f-c8830ab4002b/workItemTypes/EntScrum-Inherited.Defect",
+            "customization": "custom",
+            "color": "480000",
+            "icon": "icon_insect",
+            "isDisabled": false,
+            "inherits": null
+        },
+        {
+            "referenceName": "EntScrum-Inherited.Bug",
+            "name": "Bug",
+            "description": "Describes a divergence between required and actual behavior, and tracks the work done to correct the defect and verify the correction.",
+            "url": "https://dev.azure.com/entcu/_apis/work/processes/e3ce0f95-e3cc-43b5-b12f-c8830ab4002b/workItemTypes/EntScrum-Inherited.Bug",
+            "customization": "inherited",
+            "color": "CC293D",
+            "icon": "icon_insect",
+            "isDisabled": false,
+            "inherits": "Microsoft.VSTS.WorkItemTypes.Bug"
+        },
+        {
+            "referenceName": "EntScrum-Inherited.TestSuite",
+            "name": "Test Suite",
+            "description": "Tracks test activites for a specific feature, requirement, or user story.",
+            "url": "https://dev.azure.com/entcu/_apis/work/processes/e3ce0f95-e3cc-43b5-b12f-c8830ab4002b/workItemTypes/EntScrum-Inherited.TestSuite",
+            "customization": "inherited",
+            "color": "FF9D00",
+            "icon": "icon_test_suite",
+            "isDisabled": false,
+            "inherits": "Microsoft.VSTS.WorkItemTypes.TestSuite"
+        },
+        {
+            "referenceName": "EntScrum.BugFix",
+            "name": "Bug Fix",
+            "description": "Task to fix bug",
+            "url": "https://dev.azure.com/entcu/_apis/work/processes/e3ce0f95-e3cc-43b5-b12f-c8830ab4002b/workItemTypes/EntScrum.BugFix",
+            "customization": "custom",
+            "color": "b20b1e",
+            "icon": "icon_flame",
+            "isDisabled": false,
+            "inherits": null
+        },
+        {
+            "referenceName": "EntScrum-Inherited.ProductBacklogItem",
+            "name": "Product Backlog Item",
+            "description": "Tracks an activity the user will be able to perform with the product.",
+            "url": "https://dev.azure.com/entcu/_apis/work/processes/e3ce0f95-e3cc-43b5-b12f-c8830ab4002b/workItemTypes/EntScrum-Inherited.ProductBacklogItem",
+            "customization": "inherited",
+            "color": "009CCC",
+            "icon": "icon_clipboard",
+            "isDisabled": false,
+            "inherits": "Microsoft.VSTS.WorkItemTypes.ProductBacklogItem"
+        },
+        {
+            "referenceName": "EntScrum-Inherited.Epic",
+            "name": "Epic",
+            "description": "Epics help teams effectively manage and groom their product backlog",
+            "url": "https://dev.azure.com/entcu/_apis/work/processes/e3ce0f95-e3cc-43b5-b12f-c8830ab4002b/workItemTypes/EntScrum-Inherited.Epic",
+            "customization": "inherited",
+            "color": "FF7B00",
+            "icon": "icon_clipboard",
+            "isDisabled": false,
+            "inherits": "Microsoft.VSTS.WorkItemTypes.Epic"
+        }
+    ]
+}

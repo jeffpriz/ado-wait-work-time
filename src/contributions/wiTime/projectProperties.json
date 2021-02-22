@@ -1,0 +1,49 @@
+{
+    "count": 11,
+    "value": [
+        {
+            "name": "System.CurrentProcessTemplateId",
+            "value": "b86833a9-b6c6-4dac-a957-a8afb4f2df8a"
+        },
+        {
+            "name": "System.OriginalProcessTemplateId",
+            "value": "b86833a9-b6c6-4dac-a957-a8afb4f2df8a"
+        },
+        {
+            "name": "System.ProcessTemplateType",
+            "value": "e3ce0f95-e3cc-43b5-b12f-c8830ab4002b"
+        },
+        {
+            "name": "System.MSPROJ",
+            "value": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<MSProject>\r\n  <Mappings>\r\n    <!-- MS Project calculation engine because of the order of the following mapped fields.\r\n         To make sure the right calculation result, the following fields must appear in \r\n         this mapping file in the order respectively:\r\n            Resource Name, Start Date, Finish Date, Completed Work, Remaining Work -->\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"System.AreaPath\" ProjectField=\"pjTaskOutlineCode9\" />\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"System.AssignedTo\" ProjectField=\"pjTaskResourceNames\" />\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"System.Id\" ProjectField=\"pjTaskText10\" ProjectName=\"Work Item ID\" />\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"System.IterationPath\" ProjectField=\"pjTaskOutlineCode10\" />\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"System.Reason\" ProjectField=\"pjTaskText14\" />\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"System.Rev\" ProjectField=\"pjTaskText23\" />\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"System.State\" ProjectField=\"pjTaskText13\" ProjectName=\"State\" />\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"System.Title\" ProjectField=\"pjTaskName\" />\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"System.WorkItemType\" ProjectField=\"pjTaskText24\" />\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"Microsoft.VSTS.Common.Priority\" ProjectField=\"pjTaskText19\" ProjectName=\"Work Item Priority\" />\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"Microsoft.VSTS.Common.StackRank\" ProjectField=\"pjTaskNumber1\" />\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"Microsoft.VSTS.Scheduling.StartDate\" ProjectField=\"pjTaskStart\" PublishOnly=\"true\" />\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"Microsoft.VSTS.Scheduling.FinishDate\" ProjectField=\"pjTaskFinish\" PublishOnly=\"true\" />\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"Microsoft.VSTS.Scheduling.OriginalEstimate\" ProjectField=\"pjTaskBaselineWork\" ProjectUnits=\"pjHour\" IfSummaryRefreshOnly=\"true\" />\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"Microsoft.VSTS.Scheduling.CompletedWork\" ProjectField=\"pjTaskActualWork\" ProjectUnits=\"pjHour\" IfSummaryRefreshOnly=\"true\" />\r\n    <Mapping WorkItemTrackingFieldReferenceName=\"Microsoft.VSTS.Scheduling.RemainingWork\" ProjectField=\"pjTaskRemainingWork\" ProjectUnits=\"pjHour\" IfSummaryRefreshOnly=\"true\" />\r\n    <LinksField ProjectField=\"pjTaskText26\" />\r\n    <SyncField ProjectField=\"pjTaskText25\" />\r\n  </Mappings>\r\n</MSProject>"
+        },
+        {
+            "name": "System.Process Template",
+            "value": "MSF for Agile Software Development 2013.3"
+        },
+        {
+            "name": "System.Microsoft.TeamFoundation.Team.Count",
+            "value": 2
+        },
+        {
+            "name": "System.Microsoft.TeamFoundation.Team.Default",
+            "value": "b8dc6ad7-9a8d-4cbd-a91a-cd65f338ed5d"
+        },
+        {
+            "name": "System.SourceControlCapabilityFlags",
+            "value": "2"
+        },
+        {
+            "name": "System.SourceControlGitEnabled",
+            "value": "True"
+        },
+        {
+            "name": "System.SourceControlGitPermissionsInitialized",
+            "value": "True"
+        },
+        {
+            "name": "System.Wiki.dc3eede1-5b1b-429a-a2c1-0f882eaf5acd",
+            "value": "{\"id\":\"dc3eede1-5b1b-429a-a2c1-0f882eaf5acd\",\"versions\":[{\"Version\":\"wikiMaster\"}],\"type\":0,\"name\":\"Operations.wiki\",\"projectId\":\"2fa7bf7b-e0b5-429b-af46-5447bb584a8d\",\"repositoryId\":\"dc3eede1-5b1b-429a-a2c1-0f882eaf5acd\",\"mappedPath\":\"/\"}"
+        }
+    ]
+}

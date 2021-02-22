@@ -1,0 +1,75 @@
+{
+    "count": 7,
+    "value": [
+        {
+            "typeId": "adcc42ab-9882-485e-a3ed-7678f01f66bc",
+            "name": "Agile",
+            "referenceName": null,
+            "description": "This template is flexible and will work great for most teams using Agile planning methods, including those practicing Scrum.",
+            "parentProcessTypeId": "00000000-0000-0000-0000-000000000000",
+            "isEnabled": true,
+            "isDefault": false,
+            "customizationType": "system"
+        },
+        {
+            "typeId": "6b724908-ef14-45cf-84f8-768b5384da45",
+            "name": "Scrum",
+            "referenceName": null,
+            "description": "This template is for teams who follow the Scrum framework.",
+            "parentProcessTypeId": "00000000-0000-0000-0000-000000000000",
+            "isEnabled": true,
+            "isDefault": false,
+            "customizationType": "system"
+        },
+        {
+            "typeId": "b8a3a935-7e91-48b8-a94c-606d37c3e9f2",
+            "name": "Basic",
+            "referenceName": null,
+            "description": "This template is flexible for any process and great for teams getting started with Azure DevOps.",
+            "parentProcessTypeId": "00000000-0000-0000-0000-000000000000",
+            "isEnabled": true,
+            "isDefault": false,
+            "customizationType": "system"
+        },
+        {
+            "typeId": "27450541-8e31-4150-9947-dc59f998fc01",
+            "name": "CMMI",
+            "referenceName": null,
+            "description": "This template is for more formal projects requiring a framework for process improvement and an auditable record of decisions.",
+            "parentProcessTypeId": "00000000-0000-0000-0000-000000000000",
+            "isEnabled": true,
+            "isDefault": false,
+            "customizationType": "system"
+        },
+        {
+            "typeId": "e3ce0f95-e3cc-43b5-b12f-c8830ab4002b",
+            "name": "Ent Scrum",
+            "referenceName": "Inherited.4d8a017b223446d9bfd2680287018b3f",
+            "description": "Ent's customized Scrum process template",
+            "parentProcessTypeId": "6b724908-ef14-45cf-84f8-768b5384da45",
+            "isEnabled": true,
+            "isDefault": true,
+            "customizationType": "inherited"
+        },
+        {
+            "typeId": "f05bdf00-f6b0-4845-a61f-0c43f237424d",
+            "name": "Ent Scrum Sandbox",
+            "referenceName": "Inherited.f05bdf00f6b04845a61f0c43f237424d",
+            "description": "A copy of Ent Scrum used to test out changes",
+            "parentProcessTypeId": "6b724908-ef14-45cf-84f8-768b5384da45",
+            "isEnabled": true,
+            "isDefault": false,
+            "customizationType": "inherited"
+        },
+        {
+            "typeId": "42f1feca-a077-4939-b306-683914734bcf",
+            "name": "Agile-Inherited",
+            "referenceName": "Inherited.42f1fecaa0774939b306683914734bcf",
+            "description": "",
+            "parentProcessTypeId": "adcc42ab-9882-485e-a3ed-7678f01f66bc",
+            "isEnabled": true,
+            "isDefault": false,
+            "customizationType": "inherited"
+        }
+    ]
+}

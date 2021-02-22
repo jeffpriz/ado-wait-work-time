@@ -1,0 +1,25 @@
+{
+    "count": 2,
+    "value": [
+        {
+            "id": "69fe2265-92a6-484c-8711-2aa10257a1bd",
+            "name": "SI",
+            "description": "All production code is in this repository as well as our work items and our wiki documentation. ",
+            "url": "https://dev.azure.com/entcu/_apis/projects/69fe2265-92a6-484c-8711-2aa10257a1bd",
+            "state": "wellFormed",
+            "revision": 1525426,
+            "visibility": "private",
+            "lastUpdateTime": "2020-09-18T15:22:05.33Z"
+        },
+        {
+            "id": "2fa7bf7b-e0b5-429b-af46-5447bb584a8d",
+            "name": "Operations",
+            "description": "Used for all infrastructure as code and work items, such as the ASE, VNet, DNS, etc.  Also includes Azure cloud policies for Security and Operations.",
+            "url": "https://dev.azure.com/entcu/_apis/projects/2fa7bf7b-e0b5-429b-af46-5447bb584a8d",
+            "state": "wellFormed",
+            "revision": 1525413,
+            "visibility": "private",
+            "lastUpdateTime": "2020-06-11T23:03:55.353Z"
+        }
+    ]
+}

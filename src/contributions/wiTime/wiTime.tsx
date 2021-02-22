@@ -13,6 +13,7 @@ import { Header, TitleSize } from "azure-devops-ui/Header";
 import { CommonServiceIds, IProjectPageService, IHostNavigationService, INavigationElement, IPageRoute, getClient, TeamFoundationHostType } from "azure-devops-extension-api";
 import {WorkRestClient, BacklogConfiguration, TeamFieldValues, Board, BoardColumnType} from "azure-devops-extension-api/Work";
 import { IWorkItemFormNavigationService, WorkItemTrackingRestClient, WorkItemTrackingServiceIds, ReportingWorkItemRevisionsBatch, WorkItem, WorkItemQueryResult, Wiql, WorkItemReference } from "azure-devops-extension-api/WorkItemTracking";
+import { ProcessInfo, ProcessWorkItemType, WorkItemTrackingProcessRestClient, GetWorkItemTypeExpand } from "azure-devops-extension-api/WorkItemTrackingProcess"
 import {CoreRestClient, WebApiTeam, TeamContext } from "azure-devops-extension-api/Core";
 import * as workItemInterfaces from "./WorkItemInfo";
 import { IListBoxItem, ListBoxItemType } from "azure-devops-ui/ListBox";
@@ -23,6 +24,7 @@ import * as TimeCalc from "./Time";
 import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
 import { timeout } from "azure-devops-ui/Core/Util/Promise";
+import * as ADOProcess from "./ADOProjectCalls";
 
 
 
@@ -36,6 +38,7 @@ interface IWorkItemTimeContentState {
     workItemHistory:workItemInterfaces.IWorkItemStateHistory[],
     workItemRevTableData:workItemInterfaces.IWorkItemTableDisplay[],
     boardColumnData:workItemInterfaces.IBoardColumnStat[],
+    workItemProcessDetails:ProcessWorkItemType[],
     workItemCount:number,    
     team: string;
     dateOffset:number;
@@ -84,7 +87,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     constructor(props:{}) {
         super(props);
         
-        let initState:IWorkItemTimeContentState = {projectInfo:{id:"", name:""}, projectName:"",team:"",isToastVisible :false, isToastFadingOut:false, foundCompletedPRs: false, doneLoading: false, exception:"", teamList:[], teamBoard:undefined, teamBacklogConfig:undefined, workItemHistory:[], teamFields:{_links:undefined, url:"", values:[],defaultValue:"", field:{referenceName:"", url:""}}, workItemRevTableData:[],loadingWorkItems:false, boardColumnData:[], detailsCollapsed:true, dateOffset:30, categories:this.getInitializedCategoryInfo(), workItemCount:0};
+        let initState:IWorkItemTimeContentState = {projectInfo:{id:"", name:""}, projectName:"",team:"",isToastVisible :false, isToastFadingOut:false, foundCompletedPRs: false, doneLoading: false, exception:"", teamList:[], teamBoard:undefined, teamBacklogConfig:undefined, workItemHistory:[], teamFields:{_links:undefined, url:"", values:[],defaultValue:"", field:{referenceName:"", url:""}}, workItemRevTableData:[],loadingWorkItems:false, boardColumnData:[], detailsCollapsed:true, dateOffset:30, categories:this.getInitializedCategoryInfo(), workItemCount:0,workItemProcessDetails:[]};
         this.dateSelection = new DropdownSelection();
         this.dateSelection.select(0);
         
@@ -122,7 +125,15 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             
             const project: API.IProjectInfo | undefined = this.state.projectInfo;
             if (project) {
-                this.setState({ projectName: project.name, doneLoading:true });
+                
+                let coreClient:CoreRestClient = getClient(CoreRestClient);
+                let wiProcessClient:WorkItemTrackingProcessRestClient = getClient(WorkItemTrackingProcessRestClient);
+                let wiTypeDetails:ProcessWorkItemType[] = await ADOProcess.GetProcessWorkItemDetails(coreClient,wiProcessClient,project.id);
+                this.setState({ projectName: project.name, doneLoading:true, workItemProcessDetails:wiTypeDetails});
+                wiTypeDetails.forEach((wi)=>{
+                    console.log("Found: " + wi.referenceName + " - " + wi.name);
+
+                });
             }
             this.getTeamsList();
             //this.getWorkItemReporting()
@@ -269,11 +280,30 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                 let teamAreaPaths:TeamFieldValues = this.state.teamFields;
                 let query:string = "";
                 let queryResultPromises:Promise<WorkItemQueryResult>[] = [];
+                let uniqueStates:string[] = [];
 
+                
                 let wiqlWorkItemTypes:string = "(";
-                workItemTypes.forEach((t)=>{ wiqlWorkItemTypes = wiqlWorkItemTypes + "'" + t + "'," });
+                workItemTypes.forEach((t)=>{ 
+                    wiqlWorkItemTypes = wiqlWorkItemTypes + "'" + t + "'," 
+                    let getWorktemClosedStates:string[] = this.GetClosedStatesForWorkItemType(t);
+
+                    getWorktemClosedStates.forEach((s)=>{
+                        if(uniqueStates.find(thisOne => thisOne ==s) ==undefined)
+                        {
+                            uniqueStates.push(s);
+                        }
+                    });
+                });
                 wiqlWorkItemTypes = wiqlWorkItemTypes.substr(0,wiqlWorkItemTypes.length-1) + ")";
                 
+                let wiqlClosedStates:string = "(";
+                uniqueStates.forEach((s)=>{
+                    wiqlClosedStates = wiqlClosedStates + "'" + s + "',";
+                });
+
+                wiqlClosedStates = wiqlClosedStates.substr(0, wiqlClosedStates.length-1) + ")";
+
 
                 let wiqlAreaPaths:string = "(";
 
@@ -287,7 +317,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                     {
                         wiqlAreaPaths = " = '" + ap.value + "'";
                     }
-                    query = "SELECT [System.Id], [System.WorkItemType], [System.State], [System.AreaPath] FROM workitems WHERE [System.TeamProject] = '" + project  + "' AND [System.WorkItemType] in " + wiqlWorkItemTypes + " AND [Microsoft.vsts.Common.ClosedDate] > @today-" + dateOffset.toString() + " AND [System.AreaPath] " + wiqlAreaPaths + " AND [System.State] = 'Closed'  ORDER BY [System.ChangedDate] DESC";
+                    query = "SELECT [System.Id], [System.WorkItemType], [System.State], [System.AreaPath] FROM workitems WHERE [System.TeamProject] = '" + project  + "' AND [System.WorkItemType] in " + wiqlWorkItemTypes + " AND [Microsoft.vsts.Common.ClosedDate] > @today-" + dateOffset.toString() + " AND [System.AreaPath] " + wiqlAreaPaths + " AND [System.State] in " + wiqlClosedStates  + " ORDER BY [System.ChangedDate] DESC";
                     console.log(query);
                     let q:Wiql = {query: query};
                     queryResultPromises.push(client.queryByWiql(q,project,team,false,1000));
@@ -315,6 +345,25 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     }
 
 
+    private GetClosedStatesForWorkItemType(workItemType:string):string[]
+    {
+        let result:string[] = [];
+
+        let workItemDetails:ProcessWorkItemType[] = this.state.workItemProcessDetails;
+        let wi:ProcessWorkItemType|undefined = workItemDetails.find(w=>w.name == workItemType);
+        if(wi)
+        {
+            wi.states.forEach((s) => {
+                if(s.stateCategory == "Completed")
+                {
+                    result.push(s.name); 
+                }
+            });
+        }
+
+        return result;
+
+    }
 
 
     private async DoTeamSelect(teamId:string)
@@ -786,25 +835,26 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         let timeObject:TimeCalc.IPRDuration = TimeCalc.getMillisecondsToTime(item.average);
         let stdDevObject:TimeCalc.IPRDuration = TimeCalc.getMillisecondsToTime(item.stdDev);
         key = item.boardColumn
-        let listClassSet:string = "list-example-row flex-row h-scroll-hidden"
+        let listClassSet:string = "text-ellipsis"
+        let calcOutputClassSet:string ="fontSizeMS font-size-ms text-ellipsis secondary-text ";
         let workButtonClass:string ="";
         let waitButtonClass:string ="";
         let waitButtonDisabled:boolean =false;
         let workButtonDisabled:boolean=false;
         if(item.category == workItemInterfaces.columnCategoryChoices.NotSet)
         {
-            listClassSet = listClassSet + " cat-NotSet";            
+            listClassSet = listClassSet + " cat-NotSet";                        
         }
         if(item.category == workItemInterfaces.columnCategoryChoices.Work)
         {
-            listClassSet = listClassSet + " cat-Work";
+            listClassSet = listClassSet + " cat-Work";            
             workButtonClass = "hiddenButton";
             workButtonDisabled = true;
             waitButtonDisabled = false;
         }
         if(item.category == workItemInterfaces.columnCategoryChoices.Wait)
         {
-            listClassSet = listClassSet + " cat-Wait";
+            listClassSet = listClassSet + " cat-Wait";            
             waitButtonClass = "hiddenButton";
             waitButtonDisabled = true;
             workButtonDisabled = false;
@@ -813,14 +863,14 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         return (
             <ListItem key={key || "list-item" + index} index={index} details={details}>
                 
-                <div className={listClassSet}>
+                <div className="list-example-row flex-row h-scroll-hidden"> 
                     
                     <div
                         style={{ marginLeft: "10px", padding: "10px 0px" }}
                         className="flex-column h-scroll-hidden"
                     >
-                        <span className="text-ellipsis" style={{ fontWeight:"bolder"}}><span>{item.boardColumn}</span> <span>
- 
+                        <span className={listClassSet} style={{ fontWeight:"bolder"}}><span>{item.boardColumn}</span></span> 
+                        <span> 
                             <ButtonGroup>
                                 <Button 
                                     text="Set as Work"
@@ -840,10 +890,10 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                 />
                             </ButtonGroup>
                                  
-                        </span></span>
-                        <span className="fontSizeMS font-size-ms text-ellipsis secondary-text"> Work Item Count:  <span style={{ fontWeight:"bolder"}}>{item.workItemTimes.length.toString()}</span></span>
-                        <span className="fontSizeMS font-size-ms text-ellipsis secondary-text"> Average Time:  <span style={{ fontWeight:"bolder"}}>{timeObject.days.toString()} Days,  {timeObject.hours.toString()} Hours, {timeObject.minutes.toString()} Minutes, {timeObject.seconds} Seconds</span></span>
-                        <span className="fontSizeMS font-size-ms text-ellipsis secondary-text">Standard Deviation:  <span style={{ fontWeight:"bolder"}}>{stdDevObject.days.toString()} Days,  {stdDevObject.hours.toString()} Hours, {stdDevObject.minutes.toString()} Minutes, {stdDevObject.seconds} Seconds</span></span>
+                        </span>
+                        <span className={calcOutputClassSet}> Work Item Count:  <span style={{ fontWeight:"bolder"}}>{item.workItemTimes.length.toString()}</span></span>
+                        <span className={calcOutputClassSet}> Average Time:  <span style={{ fontWeight:"bolder"}}>{timeObject.days.toString()} Days,  {timeObject.hours.toString()} Hours, {timeObject.minutes.toString()} Minutes, {timeObject.seconds} Seconds</span></span>
+                        <span className={calcOutputClassSet}>Standard Deviation:  <span style={{ fontWeight:"bolder"}}>{stdDevObject.days.toString()} Days,  {stdDevObject.hours.toString()} Hours, {stdDevObject.minutes.toString()} Minutes, {stdDevObject.seconds} Seconds</span></span>
                     </div>
                 </div>
             </ListItem>

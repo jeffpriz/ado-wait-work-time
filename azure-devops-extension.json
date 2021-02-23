@@ -2,17 +2,17 @@
     "manifestVersion": 1,
     "id": "wiTimeReport",
     "publisher": "OneLuckiDev",
-    "version": "0.1.142",
+    "version": "0.1.143",
     "name": "Work Item Flow Efficiency",
-    "description": "This will give you insights in to who is approving the Pull Requests for your repository.",
+    "description": "Get Insight on the time your cards stay in you board columns.",
     "public": false,
     "categories": [
         "Azure Boards"
     ],
     "tags": [
-        "backlog state",
+        "backlog","state",
         "cycle time",
-        "report"
+        "report","Board","Column"
     ],
     "targets": [
         {
@@ -20,7 +20,7 @@
         }
     ],
     "icons": {
-        "default": "logo.png"
+        "default": "kanbantimeLogo.png"
     },
     "content": {
         "details": {
@@ -37,22 +37,6 @@
         },
         {
             "path": "dist",
-            "addressable": true
-        },
-        {
-            "path": "images/reviewerVote.JPG",
-            "addressable": true
-        },
-        {
-            "path": "images/targetBranches.JPG",
-            "addressable": true
-        },
-        {
-            "path": "images/trendChart.JPG",
-            "addressable": true
-        },
-        {
-            "path": "images/repoHub.PNG",
             "addressable": true
         }
     ],

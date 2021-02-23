@@ -2,10 +2,10 @@
     "manifestVersion": 1,
     "id": "wiTimeReport",
     "publisher": "OneLuckiDev",
-    "version": "0.1.144",
+    "version": "1.0.0",
     "name": "Work Item Flow Efficiency",
     "description": "Get Insight on the time your cards stay in you board columns.",
-    "public": false,
+    "public": true,
     "categories": [
         "Azure Boards"
     ],
@@ -38,6 +38,10 @@
         {
             "path": "dist",
             "addressable": true
+        },
+        {
+            "path":"images/flowScreen.PNG",
+            "addressable":true
         }
     ],
     "badges": [

@@ -17,6 +17,8 @@ Users can select Board Columns to then be a "Work" or a "Wait" column so you can
 
 This extension looks at your team project's process template, so it will take in to account customizations to the process template to judge what work items fall in to your backlog, as well as getting things like what the "Completed" work item state is ("Closed", or "Done" or whatever you've customized).
 ## Images
+![Screen Shot](images/flowScreen.PNG)
 
 ## Credits
 [Jeff Przylucki](http://www.oneluckidev.com)
+[Sara Caldwell](https://www.linkedin.com/in/sara-caldwell-a0906835/)

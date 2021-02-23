@@ -1,0 +1,86 @@
+{
+    "manifestVersion": 1,
+    "id": "wiTimeReportTest",
+    "publisher": "OneLuckiDev",
+    "version": "0.1.6",
+    "name": "Work Item Flow Efficiency - TEST",
+    "description": "This will give you insights in to who is approving the Pull Requests for your repository.",
+    "public": false,
+    "categories": [
+        "Azure Boards"
+    ],
+    "tags": [
+        "backlog","state",
+        "cycle time",
+        "report","Board","Column"
+    ],
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "icons": {
+        "default": "kanbantimeLogo.png"
+    },
+    "content": {
+        "details": {
+            "path": "overview.md"
+        },
+        "license": {
+            "path": "LICENSE"
+        }
+    },
+    "files": [
+        {
+            "path": "static",
+            "addressable": true
+        },
+        {
+            "path": "dist",
+            "addressable": true
+        }
+    ],
+    "badges": [
+        {
+            "href": "https://oneluckidev.visualstudio.com/OneLuckiDev/_apis/build/status/jeffpriz.devops-pr-stats?branchName=main",
+            "uri": "https://oneluckidev.visualstudio.com/OneLuckiDev/_apis/build/status/jeffpriz.devops-pr-stats?branchName=main",
+            "description": "Build for this extension run in Azure DevOps"
+        }
+    ],
+    "contributions": [
+        {
+            "id": "onelucki-wi-wait-work-test",
+            "type": "ms.vss-web.hub",
+            "description": "Hub to show Work Item time in different states.",
+            "targets": [
+                "ms.vss-work-web.work-hub-group"
+            ],
+            "properties": {
+                "name": "TEST Flow Efficiency ",
+                "order": 155,
+                "icon": "asset://static/barIcon.png",
+                "uri": "dist/wiTime/context.html"
+            }
+        }
+    ],
+    "scopes": [
+        "vso.work",
+        "vso.project"
+    ],
+    "links": {
+        "support": {
+            "uri": "https://github.com/jeffpriz/ado-wait-work-time/issues"
+        },
+        "repository": {
+            "uri": "https://github.com/jeffpriz/ado-wait-work-time"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "uri": "https://github.com/jeffpriz/ado-wait-work-time"
+    },
+    "branding": {
+        "color": "rgb(27,160,225)",
+        "theme": "dark"
+    }
+}

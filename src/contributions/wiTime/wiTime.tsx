@@ -34,6 +34,7 @@ interface IWorkItemTimeContentState {
     teamBacklogConfig:BacklogConfiguration|undefined;
     teamBoard:Board|undefined,
     teamList: Array<IListBoxItem<{}>>;
+    teamBacklogLevelsList:Array<IListBoxItem<{}>>;
     teamFields:TeamFieldValues;
     workItemHistory:workItemInterfaces.IWorkItemStateHistory[],
     workItemRevTableData:workItemInterfaces.IWorkItemTableDisplay[],
@@ -65,7 +66,9 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     private readonly dayMilliseconds:number = ( 24 * 60 * 60 * 1000);
     private toastRef: React.RefObject<Toast> = React.createRef<Toast>();
     private dateSelection:DropdownSelection;
+    private backlogSelection:DropdownSelection;
     private dateSelectionChoices = [        
+        { text: "Last 14 Days", id: "14" },
         { text: "Last 30 Days", id: "30" },
         { text: "Last 60 Days", id: "60" },
         { text: "Last 90 Days", id: "90" },
@@ -87,8 +90,9 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     constructor(props:{}) {
         super(props);
         
-        let initState:IWorkItemTimeContentState = {projectInfo:{id:"", name:""}, projectName:"",team:"",isToastVisible :false, isToastFadingOut:false, foundCompletedPRs: false, doneLoading: false, exception:"", teamList:[], teamBoard:undefined, teamBacklogConfig:undefined, workItemHistory:[], teamFields:{_links:undefined, url:"", values:[],defaultValue:"", field:{referenceName:"", url:""}}, workItemRevTableData:[],loadingWorkItems:false, boardColumnData:[], detailsCollapsed:true, dateOffset:30, categories:this.getInitializedCategoryInfo(), workItemCount:0,workItemProcessDetails:[]};
+        let initState:IWorkItemTimeContentState = {projectInfo:{id:"", name:""}, projectName:"",team:"",isToastVisible :false, isToastFadingOut:false, foundCompletedPRs: false, doneLoading: false, exception:"", teamList:[], teamBoard:undefined, teamBacklogConfig:undefined, workItemHistory:[], teamFields:{_links:undefined, url:"", values:[],defaultValue:"", field:{referenceName:"", url:""}}, workItemRevTableData:[],loadingWorkItems:false, boardColumnData:[], detailsCollapsed:true, dateOffset:30, categories:this.getInitializedCategoryInfo(), workItemCount:0,workItemProcessDetails:[], teamBacklogLevelsList:[]};
         this.dateSelection = new DropdownSelection();
+        this.backlogSelection = new DropdownSelection();
         this.dateSelection.select(0);
         
         this.state = initState;
@@ -130,10 +134,6 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                 let wiProcessClient:WorkItemTrackingProcessRestClient = getClient(WorkItemTrackingProcessRestClient);
                 let wiTypeDetails:ProcessWorkItemType[] = await ADOProcess.GetProcessWorkItemDetails(coreClient,wiProcessClient,project.id);
                 this.setState({ projectName: project.name, doneLoading:true, workItemProcessDetails:wiTypeDetails});
-                wiTypeDetails.forEach((wi)=>{
-                    console.log("Found: " + wi.referenceName + " - " + wi.name);
-
-                });
             }
             this.getTeamsList();
             //this.getWorkItemReporting()
@@ -188,11 +188,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                 let backlogConfig = await teamBacklogConfigPromise;
                 let teamSettings:TeamFieldValues = await teamSettingPromise;
                 let teamBoard:Board= await wClient.getBoard(tc,backlogConfig.requirementBacklog.name);
-                //let currentteamAreaPaths:string[] = [];
-                //teamSettings.values.forEach((thisAP) =>{
-                //    currentteamAreaPaths.push(thisAP.value);
 
-                //});
                 
                 this.setState({teamBacklogConfig:backlogConfig,teamFields:teamSettings, teamBoard:teamBoard});
 
@@ -370,6 +366,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     {
 
         this.setState({loadingWorkItems:true,categories:this.getInitializedCategoryInfo()});
+        let teamBacklogLevels:Array<IListBoxItem<{}>> = [];
         try {
             
             let backlogWorkItemTypes:string[] = [];
@@ -387,12 +384,13 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             let dateOffset = this.state.dateOffset;
             await this.DoGetData(backlogWorkItemTypes,dateOffset);
             //await this.GetWorkItemReporting(backlogWorkItemTypes);
-
+            teamBacklogLevels = this.getListOfBacklogLevels();
+            this.backlogSelection.select(0);
         }
         finally
         {
 
-            this.setState({loadingWorkItems:false, team:teamId});
+            this.setState({loadingWorkItems:false, team:teamId, teamBacklogLevelsList:teamBacklogLevels});
         }
     }
 
@@ -826,6 +824,25 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         this.setState({isToastVisible:true, isToastFadingOut:false, exception:toastText})
     }
 
+
+    private getListOfBacklogLevels():Array<IListBoxItem<{}>>
+    {
+        let result:Array<IListBoxItem<{}>> =[];
+
+        let teamBacklogConfig:BacklogConfiguration|undefined = this.state.teamBacklogConfig;
+        if(teamBacklogConfig != undefined)
+        {
+            let t:IListBoxItem = {id:teamBacklogConfig.requirementBacklog.id, text:teamBacklogConfig.requirementBacklog.name};
+            result.push(t);
+            teamBacklogConfig.portfolioBacklogs.forEach((pb)=>{
+                t ={id:pb.id, text:pb.name};
+                result.push(t);
+            });
+        }
+
+        return result;
+    }
+
     private renderBoardColiumnListRow = (
         index: number,
         item: workItemInterfaces.IBoardColumnStat,
@@ -907,6 +924,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         let doneLoading = this.state.doneLoading;
         let workItemHistory:workItemInterfaces.IWorkItemStateHistory[] = this.state.workItemHistory;
         let teamList:Array<IListBoxItem<{}>> = this.state.teamList;
+        let backlogLevelList:Array<IListBoxItem<{}>> = this.state.teamBacklogLevelsList;
         let loadingWorkItems:boolean = this.state.loadingWorkItems;
         let requirementName:string = "";
         let selection = new ListSelection(true);
@@ -924,10 +942,13 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             return (
                 <Page className="flex-grow prinfo-hub">
                     <Card className="selectionCard" titleProps={{text: "Selections"}}>
-                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"center", minWidth:"350px"}}>
+                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"center", minWidth:"200px"}}>
                             Teams: &nbsp; &nbsp;<Dropdown items={teamList} placeholder="Select a Team" ariaLabel="Basic" className="teamDropDown" onSelect={this.selectTeam} /> &nbsp;&nbsp;
                         </div>
-                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"center", minWidth:"350px"}}>
+                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"center", minWidth:"200px"}}>
+                            Backlog Level: &nbsp; &nbsp;<Dropdown items={backlogLevelList} ariaLabel="Basic" className="backlogDropDown" selection={this.backlogSelection}/> &nbsp; &nbsp;
+                        </div>
+                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"center", minWidth:"200px"}}>
                             For the Last # Days: &nbsp;&nbsp;
                             <Dropdown
                                                     ariaLabel="Basic"                                                                                                                                                            
@@ -936,6 +957,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                                     onSelect={this.SelectDays}
                             />  
                         </div>
+                        
                     </Card>
                     <Card className="boardColumnCard">
                                 <Card className="listColumnCard">

@@ -402,8 +402,8 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
     private async DoBacklogSelect(backlog:string)
     {
-        console.log(backlog);
 
+        this.setState({loadingWorkItems:true,categories:this.getInitializedCategoryInfo()});
         let backlogConfig:BacklogConfiguration|undefined = this.state.teamBacklogConfig
         
         if(backlogConfig)
@@ -423,6 +423,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             await this.DoGetData(workItemTypes,this.state.dateOffset);
             
         }
+        this.setState({loadingWorkItems:false,categories:this.getInitializedCategoryInfo()});
     }
 
     private GetWorkItemTypesForBacklog(levelConfig:BacklogLevelConfiguration):string[]

@@ -11,7 +11,7 @@ import { ScrollableList, IListItemDetails, ListSelection, ListItem } from "azure
 import { DropdownSelection } from "azure-devops-ui/Utilities/DropdownSelection";
 import { Header, TitleSize } from "azure-devops-ui/Header";
 import { CommonServiceIds, IProjectPageService, IHostNavigationService, INavigationElement, IPageRoute, getClient, TeamFoundationHostType } from "azure-devops-extension-api";
-import {WorkRestClient, BacklogConfiguration, TeamFieldValues, Board, BoardColumnType} from "azure-devops-extension-api/Work";
+import {WorkRestClient, BacklogConfiguration, TeamFieldValues, Board, BoardColumnType, BacklogLevelConfiguration} from "azure-devops-extension-api/Work";
 import { IWorkItemFormNavigationService, WorkItemTrackingRestClient, WorkItemTrackingServiceIds, ReportingWorkItemRevisionsBatch, WorkItem, WorkItemQueryResult, Wiql, WorkItemReference } from "azure-devops-extension-api/WorkItemTracking";
 import { ProcessInfo, ProcessWorkItemType, WorkItemTrackingProcessRestClient, GetWorkItemTypeExpand } from "azure-devops-extension-api/WorkItemTrackingProcess"
 import {CoreRestClient, WebApiTeam, TeamContext } from "azure-devops-extension-api/Core";
@@ -40,6 +40,7 @@ interface IWorkItemTimeContentState {
     workItemRevTableData:workItemInterfaces.IWorkItemTableDisplay[],
     boardColumnData:workItemInterfaces.IBoardColumnStat[],
     workItemProcessDetails:ProcessWorkItemType[],
+    backlogLevelConfig:BacklogLevelConfiguration|undefined,
     workItemCount:number,    
     team: string;
     dateOffset:number;
@@ -90,7 +91,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     constructor(props:{}) {
         super(props);
         
-        let initState:IWorkItemTimeContentState = {projectInfo:{id:"", name:""}, projectName:"",team:"",isToastVisible :false, isToastFadingOut:false, foundCompletedPRs: false, doneLoading: false, exception:"", teamList:[], teamBoard:undefined, teamBacklogConfig:undefined, workItemHistory:[], teamFields:{_links:undefined, url:"", values:[],defaultValue:"", field:{referenceName:"", url:""}}, workItemRevTableData:[],loadingWorkItems:false, boardColumnData:[], detailsCollapsed:true, dateOffset:30, categories:this.getInitializedCategoryInfo(), workItemCount:0,workItemProcessDetails:[], teamBacklogLevelsList:[]};
+        let initState:IWorkItemTimeContentState = {projectInfo:{id:"", name:""}, projectName:"",team:"",isToastVisible :false, isToastFadingOut:false, foundCompletedPRs: false, doneLoading: false, exception:"", teamList:[], teamBoard:undefined, teamBacklogConfig:undefined, workItemHistory:[], teamFields:{_links:undefined, url:"", values:[],defaultValue:"", field:{referenceName:"", url:""}}, workItemRevTableData:[],loadingWorkItems:false, boardColumnData:[], detailsCollapsed:true, dateOffset:30, categories:this.getInitializedCategoryInfo(), workItemCount:0,workItemProcessDetails:[], teamBacklogLevelsList:[], backlogLevelConfig:undefined};
         this.dateSelection = new DropdownSelection();
         this.backlogSelection = new DropdownSelection();
         this.dateSelection.select(0);
@@ -373,13 +374,13 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             let teamInfoProm:Promise<WebApiTeam> = this.GetTeam(teamId);
             await this.GetTeamConfig(teamId);
             let backlogConfig:BacklogConfiguration|undefined = this.state.teamBacklogConfig
+            
             if(backlogConfig)
             {
-                backlogConfig.requirementBacklog.workItemTypes.forEach((thisType) => {
-                backlogWorkItemTypes.push(thisType.name);
-                    
-                });
+                let c:BacklogLevelConfiguration = backlogConfig.requirementBacklog;
+                backlogWorkItemTypes = this.GetWorkItemTypesForBacklog(c);
             }
+
             let teamInfo:WebApiTeam =  await teamInfoProm;
             let dateOffset = this.state.dateOffset;
             await this.DoGetData(backlogWorkItemTypes,dateOffset);
@@ -390,24 +391,70 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         finally
         {
 
-            this.setState({loadingWorkItems:false, team:teamId, teamBacklogLevelsList:teamBacklogLevels});
+            let backlogLevelConfig:BacklogLevelConfiguration|undefined = undefined;
+            if(this.state.teamBacklogConfig)
+            {
+                backlogLevelConfig = this.state.teamBacklogConfig.requirementBacklog;
+            }
+            this.setState({loadingWorkItems:false, team:teamId, teamBacklogLevelsList:teamBacklogLevels, backlogLevelConfig: backlogLevelConfig});
         }
     }
+
+    private async DoBacklogSelect(backlog:string)
+    {
+        console.log(backlog);
+
+        let backlogConfig:BacklogConfiguration|undefined = this.state.teamBacklogConfig
+        
+        if(backlogConfig)
+        {
+            let backlogLevelConfig: BacklogLevelConfiguration = backlogConfig.requirementBacklog;
+            if(backlog != "Microsoft.RequirementCategory")
+            {
+                backlogConfig.portfolioBacklogs.forEach((b) => {
+                    if(b.id == backlog)
+                    {
+                        backlogLevelConfig = b;
+                    }
+                });
+            }
+            let workItemTypes:string[] = this.GetWorkItemTypesForBacklog(backlogLevelConfig)
+            this.setState({backlogLevelConfig: backlogLevelConfig});
+            await this.DoGetData(workItemTypes,this.state.dateOffset);
+            
+        }
+    }
+
+    private GetWorkItemTypesForBacklog(levelConfig:BacklogLevelConfiguration):string[]
+    {
+        let result:string[] = [];
+
+        
+            if(levelConfig)
+            {
+                levelConfig.workItemTypes.forEach((thisType) => {
+                    result.push(thisType.name);
+                    
+                });
+            }
+
+        return result;
+    }
+
 
     private async DoDateSelect(dateOffset:number)
     {
         this.setState({loadingWorkItems:true});
-        let backlogWorkItemTypes:string[] = [];
-        let backlogConfig:BacklogConfiguration|undefined = this.state.teamBacklogConfig
-            if(backlogConfig)
-            {
-                backlogConfig.requirementBacklog.workItemTypes.forEach((thisType) => {
-                backlogWorkItemTypes.push(thisType.name);                    
-                });
 
-            }
+        let backlogWorkItemTypes:string[] = [];
+        
         if(this.state.team != "")
         {            
+            if(this.state.backlogLevelConfig != undefined)
+            {
+                let c:BacklogLevelConfiguration = this.state.backlogLevelConfig;
+                backlogWorkItemTypes =  this.GetWorkItemTypesForBacklog(c);
+            }
             await this.DoGetData(backlogWorkItemTypes,dateOffset);
         }
         this.setState({dateOffset:dateOffset, loadingWorkItems:false});
@@ -732,6 +779,10 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
     }
 
+    private selectBacklog = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) =>{
+        this.DoBacklogSelect(item.id);
+    }
+
     private setColumnCategory(boardColumnName:string, category:workItemInterfaces.columnCategoryChoices)
     {
         
@@ -946,7 +997,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                             Teams: &nbsp; &nbsp;<Dropdown items={teamList} placeholder="Select a Team" ariaLabel="Basic" className="teamDropDown" onSelect={this.selectTeam} /> &nbsp;&nbsp;
                         </div>
                         <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"center", minWidth:"200px"}}>
-                            Backlog Level: &nbsp; &nbsp;<Dropdown items={backlogLevelList} ariaLabel="Basic" className="backlogDropDown" selection={this.backlogSelection}/> &nbsp; &nbsp;
+                            Backlog Level: &nbsp; &nbsp;<Dropdown items={backlogLevelList} ariaLabel="Basic" className="backlogDropDown" selection={this.backlogSelection} onSelect={this.selectBacklog} /> &nbsp; &nbsp;
                         </div>
                         <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"center", minWidth:"200px"}}>
                             For the Last # Days: &nbsp;&nbsp;

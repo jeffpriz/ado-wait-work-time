@@ -1090,11 +1090,6 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                         </div>
                     </Card>
                     <Card>
-                        <div>
-                            There were {boardColumnCount.toString()} columns found
-                        </div>
-                    </Card>
-                    <Card>
                         
                     <Spinner label="Loading ..." size={SpinnerSize.large} />
                         

@@ -1,5 +1,5 @@
 
-# Work Item Workflow Efficiency
+# Work Item Flow Efficiency
 
 This Extension will give you a new hub in your Work Item that will report on your team's work item average time spent in your board columns.  It will also let you categorize your board columns in to "Wait" columns and "Work" columns, which will give your team, scrum masters, and agile coaches insight in to how much time on average your work items spend waiting on something vs. how long they are being worked on.
 

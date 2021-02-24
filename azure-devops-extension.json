@@ -4,7 +4,7 @@
     "publisher": "OneLuckiDev",
     "version": "1.0.0",
     "name": "Work Item Flow Efficiency",
-    "description": "Get Insight on the time your cards stay in you board columns.",
+    "description": "Get Insight on the time your cards stay in your board columns.",
     "public": true,
     "categories": [
         "Azure Boards"

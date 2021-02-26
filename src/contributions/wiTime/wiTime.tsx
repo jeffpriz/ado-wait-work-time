@@ -716,7 +716,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
         history.forEach((thisWI) => {
             thisWI.revisions.forEach((thisRev) =>{
-                let duration:TimeCalc.IPRDuration = TimeCalc.getMillisecondsToTime(thisRev.timeInColumn);
+                let duration:TimeCalc.IDuration = TimeCalc.getMillisecondsToTime(thisRev.timeInColumn);
                 let durationString:string = duration.days.toString() + " Days, " + duration.hours.toString() + " Hours, " + duration.minutes.toString() + " Minutes, " + duration.seconds.toString() + " Seconds";
                 
                 let dis:workItemInterfaces.IWorkItemTableDisplay = {workItemID:thisRev.workItemID, revNum:thisRev.revNum, boardColumn:thisRev.boardColumn, boardColumnStartTime: thisRev.boardColumnStartTime.toString(), timeInColumn: durationString}
@@ -901,8 +901,8 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         details: IListItemDetails<workItemInterfaces.IBoardColumnStat>,
         key?: string
     ): JSX.Element => {
-        let timeObject:TimeCalc.IPRDuration = TimeCalc.getMillisecondsToTime(item.average);
-        let stdDevObject:TimeCalc.IPRDuration = TimeCalc.getMillisecondsToTime(item.stdDev);
+        let timeObject:TimeCalc.IDuration = TimeCalc.getMillisecondsToTime(item.average);
+        let stdDevObject:TimeCalc.IDuration = TimeCalc.getMillisecondsToTime(item.stdDev);
         key = item.boardColumn
         let listClassSet:string = "text-ellipsis"
         let calcOutputClassSet:string ="fontSizeMS font-size-ms text-ellipsis secondary-text ";
@@ -985,8 +985,8 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         let boardColumnList = new ArrayItemProvider<workItemInterfaces.IBoardColumnStat>(this.state.boardColumnData);
         let workCategoryInfo = this.GetWorkItemCategory(this.WORK_CAT_NAME);
         let waitCategoryInfo = this.GetWorkItemCategory(this.WAIT_CAT_NAME);
-        let workAvgTime:TimeCalc.IPRDuration = TimeCalc.getMillisecondsToTime(workCategoryInfo.stats.average);
-        let waitAvgTime:TimeCalc.IPRDuration = TimeCalc.getMillisecondsToTime(waitCategoryInfo.stats.average);
+        let workAvgTime:TimeCalc.IDuration = TimeCalc.getMillisecondsToTime(workCategoryInfo.stats.average);
+        let waitAvgTime:TimeCalc.IDuration = TimeCalc.getMillisecondsToTime(waitCategoryInfo.stats.average);
 
         if(this.state.teamBacklogConfig) {requirementName = this.state.teamBacklogConfig.requirementBacklog.name;}
         if(doneLoading) {

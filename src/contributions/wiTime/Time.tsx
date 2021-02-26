@@ -2,13 +2,13 @@
 export interface IDurationSlice
 {
     startDate:Date,
-    PRCount:number,
+    Count:number,
     minutes:number,
     runningTotalMinutes:number,
     runningTotalCount:number
 }
 
-export interface IPRDuration
+export interface IDuration
 {
     days:number,
     hours:number,
@@ -17,7 +17,7 @@ export interface IPRDuration
     milliseconds:number
 }
 
-export function getMillisecondsToTime(duration:number):IPRDuration {
+export function getMillisecondsToTime(duration:number):IDuration {
     //let duration:number = endTime.valueOf() - startTime.valueOf();
     
         let remain = duration

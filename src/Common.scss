@@ -29,25 +29,26 @@
     padding: 0px 12px;
 }
 
-.boardColumnCard
-{
-    min-height: 310px;
-    
+.mainDisplayArea
+{    
+    border-spacing: 10px;
     width: 100%;
 }
 .listColumnCard{
     min-width:450px;
-    width:40%;
+    min-height: 310px;
+    width:35%;
+    padding:2px;
 }
 .categoryColumnCard
 {
     min-width: 300px;
-    width: 30%;
+    width: 50%;
 }
 
 .cat-Work 
 {
-    background-color:lightblue;
+    background-color:royalblue;
     color:black;
 }
 .cat-NotSet
@@ -56,7 +57,7 @@
 }
 .cat-Wait
 {
-    background-color:lemonchiffon;
+    background-color:rgb(255, 235, 124);
     color:black;
 }
 
@@ -67,23 +68,56 @@
 
 .cat-wait-header
 {
-    background-color:lemonchiffon;
+    background-color:rgb(255, 235, 124);
     color:black;
     width: 100%;
     
 }
 .cat-work-header
 {
-    background-color:lightblue;
+    background-color:royalblue;
+    
     color:black;
     width: 100%;
     
 }
 .cat-area
 {
-    height: 200px;
+    height: 20px;
 }
+
 .cat-table
 {
     width: 100%;
+    
+}
+
+.categoryColumnArea
+{
+    min-width: 650px;
+    width:65%;
+}
+.chartColumnCard
+{
+    width: 100%;
+    min-width: 650px;
+}
+.efficiencyColumnCard
+{
+    width: 100%;
+    min-width: 450px; 
+}
+.efficiencyText
+{
+    font-size: 40px;
+    font-weight: bolder;    
+}
+.categoryAveagesArea
+{
+    width: 100%;
+}
+
+.wiTable
+{
+    padding-top: 3px;
 }

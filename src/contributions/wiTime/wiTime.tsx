@@ -2,9 +2,11 @@ import * as React from "react";
 import * as SDK from "azure-devops-extension-sdk";
 import * as API from "azure-devops-extension-api";
 import { showRootComponent } from "../../Common";
+import { Doughnut, Bar} from 'react-chartjs-2';
 import { Page } from "azure-devops-ui/Page";
 import { Card } from "azure-devops-ui/Card";
 import { Toast } from "azure-devops-ui/Toast";
+
 import {Dropdown} from "azure-devops-ui/Dropdown";
 import { Spinner, SpinnerSize } from "azure-devops-ui/Spinner";
 import { ScrollableList, IListItemDetails, ListSelection, ListItem } from "azure-devops-ui/List";
@@ -25,6 +27,7 @@ import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
 import { timeout } from "azure-devops-ui/Core/Util/Promise";
 import * as ADOProcess from "./ADOProjectCalls";
+import {GetWaitWorkBarChartData, IBarChartData, IChartData, IChartDataset, IBarChartDataset, WaitColumnColor, WorkColumnColor, NotSetColor, GetWaitWorkPieChartData} from "./ChartingInfo"
 
 
 
@@ -82,6 +85,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
     private readonly WAIT_CAT_NAME:string = "Wait";
     private readonly WORK_CAT_NAME:string = "Work";
+    private readonly NOT_SET_NAME:string = "Not Set";
 
 
     private columnCategoryChoices = [
@@ -103,9 +107,10 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     private getInitializedCategoryInfo():ICategory[]
     {
         
-        let waitCat:ICategory = {categoryName:this.WAIT_CAT_NAME, boardColumnNames:[], categoryType:workItemInterfaces.columnCategoryChoices.Wait, stats:{boardColumn:"",average:0, stdDev:0, workItemTimes:[],category:workItemInterfaces.columnCategoryChoices.Wait}};
-        let workCat:ICategory = {categoryName:this.WORK_CAT_NAME, boardColumnNames:[], categoryType:workItemInterfaces.columnCategoryChoices.Work, stats:{boardColumn:"",average:0, stdDev:0, workItemTimes:[],category:workItemInterfaces.columnCategoryChoices.Work}};
-        return [waitCat,workCat]
+        let waitCat:ICategory = {categoryName:this.WAIT_CAT_NAME, boardColumnNames:[], categoryType:workItemInterfaces.columnCategoryChoices.Wait, stats:{boardColumn:"",average:0, stdDev:0, total:0, workItemTimes:[],category:workItemInterfaces.columnCategoryChoices.Wait}};
+        let workCat:ICategory = {categoryName:this.WORK_CAT_NAME, boardColumnNames:[], categoryType:workItemInterfaces.columnCategoryChoices.Work, stats:{boardColumn:"",average:0, stdDev:0, total:0, workItemTimes:[],category:workItemInterfaces.columnCategoryChoices.Work}};
+        let notSetCat:ICategory = {categoryName:this.NOT_SET_NAME, boardColumnNames:[], categoryType:workItemInterfaces.columnCategoryChoices.NotSet, stats:{boardColumn:"",average:0, stdDev:0, total:0, workItemTimes:[],category:workItemInterfaces.columnCategoryChoices.NotSet}};
+        return [notSetCat, waitCat,workCat]
     }
 
     public async componentDidMount() {        
@@ -387,6 +392,15 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             //await this.GetWorkItemReporting(backlogWorkItemTypes);
             teamBacklogLevels = this.getListOfBacklogLevels();
             this.backlogSelection.select(0);
+            let boardColumnData:workItemInterfaces.IBoardColumnStat[] = this.state.boardColumnData;
+            let notsetcat = this.GetWorkItemCategory(this.NOT_SET_NAME);
+            
+            if(boardColumnData && notsetcat)            
+            {
+                boardColumnData.forEach((bc)=> {
+                    notsetcat.boardColumnNames.push(bc.boardColumn);
+                });
+            }
         }
         finally
         {
@@ -477,16 +491,19 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         this.CalculateBoardColumnAverages(boardColumns);
         this.setState({boardColumnData:boardColumns});
         this.CollectAllWorkItemRevisionForTable(calculatedData);
-        this.ReDoCategoryCalcs();
+        this.ReDoCategoryCalcs(this.state.categories);
     }
 
 
-    private ReDoCategoryCalcs()
+
+
+    private ReDoCategoryCalcs(categoryInfo: ICategory[])
     {
         
-        let categoryInfo = this.state.categories;
+        //let categoryInfo = this.state.categories;
         let waitCat:ICategory | undefined = categoryInfo.find(c => c.categoryName == this.WAIT_CAT_NAME);
         let workCat:ICategory | undefined = categoryInfo.find(c => c.categoryName == this.WORK_CAT_NAME);
+        let notSetCat:ICategory | undefined = categoryInfo.find(c => c.categoryName == this.NOT_SET_NAME);
 
         if(waitCat)
         {
@@ -495,6 +512,10 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         if(workCat)
         {
             workCat.stats = this.CalculateCategoryColumnAverages(workCat);
+        }
+        if(notSetCat)
+        {
+            notSetCat.stats = this.CalculateCategoryColumnAverages(notSetCat);
         }
 
         this.setState({categories:categoryInfo});
@@ -524,7 +545,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                     
                     if(resultBoardColumn == undefined)                
                     {
-                        let newBoardColumn:workItemInterfaces.IBoardColumnStat = {boardColumn:thisWIRev.boardColumn, average:0,stdDev:0,workItemTimes:[], category:this.GetBoardColumnCategory(thisWIRev.boardColumn)};
+                        let newBoardColumn:workItemInterfaces.IBoardColumnStat = {boardColumn:thisWIRev.boardColumn, average:0,stdDev:0, total:0, workItemTimes:[], category:this.GetBoardColumnCategory(thisWIRev.boardColumn)};
                         result.push(newBoardColumn);
                         resultBoardColumn = newBoardColumn;
                     }
@@ -562,6 +583,10 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             {
                 result = workItemInterfaces.columnCategoryChoices.Wait;
             }
+            else if(this.GetWorkItemCategory(this.NOT_SET_NAME).boardColumnNames.find(c=> c == boardColumnName))
+            {
+                result = workItemInterfaces.columnCategoryChoices.NotSet;
+            }
         }
         catch(ex)
         {
@@ -587,7 +612,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
     private CalculateCategoryColumnAverages(category:ICategory):workItemInterfaces.IBoardColumnStat
     {
-        let result:workItemInterfaces.IBoardColumnStat = {boardColumn:"", average:0,stdDev:0,workItemTimes:[],category:category.categoryType};
+        let result:workItemInterfaces.IBoardColumnStat = {boardColumn:"", average:0,stdDev:0, total:0, workItemTimes:[],category:category.categoryType};
 
 
         let boardColumnData:workItemInterfaces.IBoardColumnStat[] = this.state.boardColumnData;
@@ -612,6 +637,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         if(this.state.workItemCount >0)
         {
             result.average = totalTime / this.state.workItemCount;
+            result.total = totalTime;
         }
         
         return result;
@@ -797,6 +823,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
             let waitCat:ICategory | undefined = categoryInfo.find(c => c.categoryName == this.WAIT_CAT_NAME);
             let workCat:ICategory | undefined = categoryInfo.find(c => c.categoryName == this.WORK_CAT_NAME);
+            let notSetCat:ICategory | undefined = categoryInfo.find(c => c.categoryName == this.NOT_SET_NAME);
             if(category == workItemInterfaces.columnCategoryChoices.Wait)
             {
                 
@@ -811,6 +838,14 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                     if(ndx > -1)
                     {
                         workCat.boardColumnNames.splice(ndx,1);
+                    }
+                }
+                if(notSetCat)
+                {
+                    let ndx = notSetCat.boardColumnNames.indexOf(boardColumnName);
+                    if(ndx > -1)
+                    {
+                        notSetCat.boardColumnNames.splice(ndx,1);
                     }
                 }
             }
@@ -830,17 +865,18 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                         waitCat.boardColumnNames.splice(ndx,1);
                     }
                 }
+                if(notSetCat)
+                {
+                    let ndx = notSetCat.boardColumnNames.indexOf(boardColumnName);
+                    if(ndx > -1)
+                    {
+                        notSetCat.boardColumnNames.splice(ndx,1);
+                    }
+                }
             }
-            if(waitCat)
-            {
-                waitCat.stats= this.CalculateCategoryColumnAverages(waitCat);
-            }
-            if(workCat)
-            {
-                workCat.stats = this.CalculateCategoryColumnAverages(workCat);
-            }
+            this.ReDoCategoryCalcs(categoryInfo);
 
-            this.setState({boardColumnData:boardColumnData, categories:categoryInfo});
+            this.setState({boardColumnData:boardColumnData});
 
         }
         else{
@@ -851,10 +887,26 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     }
 
 
+    private CalculateFlowEfficeincy(waitTimeInfo:ICategory, workTimeInfo:ICategory):number
+    {
+        let result:number = 0;
+
+        console.log("total wait time " + waitTimeInfo.stats.total.toString());
+        console.log(" total Work time " + workTimeInfo.stats.total.toString());
+
+        let totalTime:number = waitTimeInfo.stats.total + workTimeInfo.stats.total;
+        if(totalTime > 0)
+        {
+            result = workTimeInfo.stats.total / totalTime;
+        }
+
+        return result;
+    }
+
 
     private GetWorkItemCategory(categoryName:string):ICategory
     {
-        let result:ICategory = { categoryName:"",boardColumnNames:[], categoryType:workItemInterfaces.columnCategoryChoices.NotSet, stats:{boardColumn:"",average:0, stdDev:0, workItemTimes:[],category:workItemInterfaces.columnCategoryChoices.NotSet}};
+        let result:ICategory = { categoryName:"",boardColumnNames:[], categoryType:workItemInterfaces.columnCategoryChoices.NotSet, stats:{boardColumn:"",average:0, stdDev:0,  total:0, workItemTimes:[],category:workItemInterfaces.columnCategoryChoices.NotSet}};
 
         let categoryInfo:ICategory[] = this.state.categories;
         let selectedCat = categoryInfo.find(c=>c.categoryName == categoryName)
@@ -985,15 +1037,20 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         let boardColumnList = new ArrayItemProvider<workItemInterfaces.IBoardColumnStat>(this.state.boardColumnData);
         let workCategoryInfo = this.GetWorkItemCategory(this.WORK_CAT_NAME);
         let waitCategoryInfo = this.GetWorkItemCategory(this.WAIT_CAT_NAME);
+        let notSetCategoryInfo = this.GetWorkItemCategory(this.NOT_SET_NAME);
         let workAvgTime:TimeCalc.IDuration = TimeCalc.getMillisecondsToTime(workCategoryInfo.stats.average);
         let waitAvgTime:TimeCalc.IDuration = TimeCalc.getMillisecondsToTime(waitCategoryInfo.stats.average);
+        let timeBarData:IBarChartData = GetWaitWorkBarChartData(waitCategoryInfo.stats.average,workCategoryInfo.stats.average);
+        let pieChartData:IChartData = GetWaitWorkPieChartData(waitCategoryInfo.stats.total, workCategoryInfo.stats.total,notSetCategoryInfo.stats.total);
+        let flowEfficiency:string = (this.CalculateFlowEfficeincy(waitCategoryInfo, workCategoryInfo) * 100).toFixed(2).toString();
+
 
         if(this.state.teamBacklogConfig) {requirementName = this.state.teamBacklogConfig.requirementBacklog.name;}
         if(doneLoading) {
             if(!loadingWorkItems){
             return (
                 <Page className="flex-grow prinfo-hub">
-                    <Card className="selectionCard" titleProps={{text: "Selections"}}>
+                    <Card className="selectionCard flex-row" titleProps={{text: "Selections"}}>
                         <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"center", minWidth:"200px"}}>
                             Teams: &nbsp; &nbsp;<Dropdown items={teamList} placeholder="Select a Team" ariaLabel="Basic" className="teamDropDown" onSelect={this.selectTeam} /> &nbsp;&nbsp;
                         </div>
@@ -1011,51 +1068,91 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                         </div>
                         
                     </Card>
-                    <Card className="boardColumnCard">
-                                <Card className="listColumnCard">
-                                <ScrollableList
-                                    itemProvider={boardColumnList}
-                                    renderRow={this.renderBoardColiumnListRow}
-                                    selection={selection}
-                                    width="450px"
-                                />    
-                                </Card>
-                                <Card className="categoryColumnCard">
-                                    <table className="cat-table">
-                                        <tr>
-                                            <td>
-                                                <Header title="Wait Times" className="cat-wait-header"></Header>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div className="cat-area">
-                                                <span className="fontSizeMS font-size-ms text-ellipsis secondary-text"> Average Time:  <span style={{ fontWeight:"bolder"}}>{waitAvgTime.days.toString()} Days,  {waitAvgTime.hours.toString()} Hours, {waitAvgTime.minutes.toString()} Minutes, {waitAvgTime.seconds} Seconds</span></span>
+                    <Card className="mainDisplayArea flex-row">
+                                
+                                <div  className="listColumnCard flex-column">
+                                    <Card>
+                                    <ScrollableList
+                                        itemProvider={boardColumnList}
+                                        renderRow={this.renderBoardColiumnListRow}
+                                        selection={selection}
+                                        width="450px"
+                                        className="flex-cell"
+                                    />    
+                                    </Card>
+                                
+                                </div>
+                                
+                                <div className="flex-column categoryColumnArea">
+                                <div className="flex-row" style={{width:"100%"}}>
+                                        <div>
+                                            <Card className="flex-column flex-grow efficiencyColumnCard" titleProps={{text:"Flow Efficiency %"}}>
+                                                <div className="flex-grow efficiencyText">                                                    
+                                                    {flowEfficiency}%
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    </table>
+                                            </Card>
+                                        </div>
+                                    </div>
+                                    <div className="flex-row" style={{width:"100%"}}>
+                                        <div>
+                                            <Card className="flex-column flex-grow chartColumnCard">
+                                                <div className="flex-grow">
+                                                <Bar data={timeBarData}   height={250}/>
+                                                </div>
+                                                
+                                                <div  className="flex-grow" style={{minWidth:"450px"}}>
+                                                <Doughnut data={pieChartData} height={150} />
+                                                </div>
+                                                
 
-                                </Card>
-                                <Card className="categoryColumnCard">
-                                    <table className="cat-table">
-                                        <tr>
-                                            <td>
-                                                <Header title="Work Times" className="cat-work-header"></Header>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div className="cat-area">
-                                                    
-                                                    <span className="fontSizeMS font-size-ms text-ellipsis secondary-text"> Average Time:  <span style={{ fontWeight:"bolder"}}>{workAvgTime.days.toString()} Days,  {workAvgTime.hours.toString()} Hours, {workAvgTime.minutes.toString()} Minutes, {workAvgTime.seconds} Seconds</span></span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </table>
+                                            </Card>
+                                        </div>
+                                    </div>
+                                    <div className="flex-row">
+                                        <div className="flex-column categoryAveagesArea">
+                                            <div className="flex-row">
+                                                <Card className="flex-column categoryColumnCard">
+                                                    <table className="cat-table">
+                                                        <tr>
+                                                            <td>
+                                                                <Header title="Wait Times" className="cat-wait-header"></Header>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <div className="cat-area">
+                                                                <span className="fontSizeMS font-size-ms text-ellipsis secondary-text"> Average Time:  <span style={{ fontWeight:"bolder"}}>{waitAvgTime.days.toString()} Days,  {waitAvgTime.hours.toString()} Hours, {waitAvgTime.minutes.toString()} Minutes, {waitAvgTime.seconds} Seconds</span></span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </Card>
+                                                <Card className="flex-column categoryColumnCard">
+                                                                                        
+                                                    <table className="cat-table">
+                                                        <tr>
+                                                            <td>
+                                                                <Header title="Work Times" className="cat-work-header"></Header>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <div className="cat-area">
+                                                                    
+                                                                    <span className="fontSizeMS font-size-ms text-ellipsis secondary-text"> Average Time:  <span style={{ fontWeight:"bolder"}}>{workAvgTime.days.toString()} Days,  {workAvgTime.hours.toString()} Hours, {workAvgTime.minutes.toString()} Minutes, {workAvgTime.seconds} Seconds</span></span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                
+                                                </Card>
+                                            </div>
+                                        </div>
+                                    </div>
                                     
-                                    
-                                </Card>
+
+                                </div>
+                                
                     </Card>
                     <Card collapsible={true} collapsed={this.state.detailsCollapsed} titleProps={{ text: "Work Item Details" }} onCollapseClick={this.detailsTableCollapseClick}>
                         
@@ -1064,6 +1161,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                         columns={WITableSetup.workItemColumns}
                         itemProvider={tableItems}
                         role="table"
+                        className="wiTable"
                         containerClassName="v-scroll-auto"
                         />
                         

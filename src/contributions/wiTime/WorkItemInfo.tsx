@@ -35,6 +35,7 @@ export interface IBoardColumnStat
     boardColumn:string,
     average:number,
     stdDev:any,
+    total:number,
     workItemTimes:IBoardColumnWorkItemTime[];
     category:columnCategoryChoices
 }

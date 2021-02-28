@@ -23,7 +23,7 @@
 
   .selectionCard
   {
-      min-height: 130px;
+      min-height: 85px;
   }
   .list-example-row {
     padding: 0px 12px;
@@ -33,6 +33,7 @@
 {    
     border-spacing: 10px;
     width: 100%;
+
 }
 .listColumnCard{
     min-width:450px;
@@ -96,6 +97,8 @@
 {
     min-width: 650px;
     width:65%;
+    min-height: 310px;
+    overflow-y: scroll;
 }
 .chartColumnCard
 {

@@ -999,7 +999,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                     dataIndex={index}
                                     disabled={workButtonDisabled}
                                     id={item.boardColumn}                                       
-                                    onClick={() => this.setColumnCategory(item.boardColumn,workItemInterfaces.columnCategoryChoices.Work)}
+                                    onClick={() => this.setColumnCategory(item.boardColumn,workItemInterfaces.columnCategoryChoices.Work)}                                    
                                 />
                                 <Button 
                                     text="Set as Wait"
@@ -1050,7 +1050,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             if(!loadingWorkItems){
             return (
                 <Page className="flex-grow prinfo-hub">
-                    <Card className="selectionCard flex-row" titleProps={{text: "Selections"}}>
+                    <Card className="selectionCard flex-row" titleProps={{text: "Selections"}} >
                         <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"center", minWidth:"200px"}}>
                             Teams: &nbsp; &nbsp;<Dropdown items={teamList} placeholder="Select a Team" ariaLabel="Basic" className="teamDropDown" onSelect={this.selectTeam} /> &nbsp;&nbsp;
                         </div>
@@ -1058,13 +1058,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                             Backlog Level: &nbsp; &nbsp;<Dropdown items={backlogLevelList} ariaLabel="Basic" className="backlogDropDown" selection={this.backlogSelection} onSelect={this.selectBacklog} /> &nbsp; &nbsp;
                         </div>
                         <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"center", minWidth:"200px"}}>
-                            For the Last # Days: &nbsp;&nbsp;
-                            <Dropdown
-                                                    ariaLabel="Basic"                                                                                                                                                            
-                                                    items={this.dateSelectionChoices}
-                                                    selection={this.dateSelection}
-                                                    onSelect={this.SelectDays}
-                            />  
+                            Work Items Closed in : &nbsp;&nbsp; <Dropdown ariaLabel="Basic" className="daysDropDown" items={this.dateSelectionChoices} selection={this.dateSelection} onSelect={this.SelectDays} />  
                         </div>
                         
                     </Card>
@@ -1087,9 +1081,24 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                 <div className="flex-row" style={{width:"100%"}}>
                                         <div>
                                             <Card className="flex-column flex-grow efficiencyColumnCard" titleProps={{text:"Flow Efficiency %"}}>
-                                                <div className="flex-grow efficiencyText">                                                    
-                                                    {flowEfficiency}%
-                                                </div>
+                                                <table>
+                                                    <tr>
+                                                        <td>
+                                                        <div className="flex-grow efficiencyText flex-row">                                                    
+                                                            {flowEfficiency}%
+                                                        </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                        <div className="body-s flex-row">
+                                                            Calculated as Work Time / (Work Time + Wait Time)
+                                                        </div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                
+                                                
                                             </Card>
                                         </div>
                                     </div>

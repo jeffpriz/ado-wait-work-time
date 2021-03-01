@@ -12,9 +12,9 @@ import { Spinner, SpinnerSize } from "azure-devops-ui/Spinner";
 import { ScrollableList, IListItemDetails, ListSelection, ListItem } from "azure-devops-ui/List";
 import { DropdownSelection } from "azure-devops-ui/Utilities/DropdownSelection";
 import { Header, TitleSize } from "azure-devops-ui/Header";
-import { CommonServiceIds, IProjectPageService, IHostNavigationService, INavigationElement, IPageRoute, getClient, TeamFoundationHostType } from "azure-devops-extension-api";
+import { CommonServiceIds, IProjectPageService, getClient } from "azure-devops-extension-api";
 import {WorkRestClient, BacklogConfiguration, TeamFieldValues, Board, BoardColumnType, BacklogLevelConfiguration} from "azure-devops-extension-api/Work";
-import { IWorkItemFormNavigationService, WorkItemTrackingRestClient, WorkItemTrackingServiceIds, ReportingWorkItemRevisionsBatch, WorkItem, WorkItemQueryResult, Wiql, WorkItemReference } from "azure-devops-extension-api/WorkItemTracking";
+import { WorkItemTrackingRestClient,  WorkItem, WorkItemQueryResult, Wiql, WorkItemReference } from "azure-devops-extension-api/WorkItemTracking";
 import { ProcessInfo, ProcessWorkItemType, WorkItemTrackingProcessRestClient, GetWorkItemTypeExpand } from "azure-devops-extension-api/WorkItemTrackingProcess"
 import {CoreRestClient, WebApiTeam, TeamContext } from "azure-devops-extension-api/Core";
 import * as workItemInterfaces from "./WorkItemInfo";
@@ -27,7 +27,7 @@ import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
 import { timeout } from "azure-devops-ui/Core/Util/Promise";
 import * as ADOProcess from "./ADOProjectCalls";
-import {GetWaitWorkBarChartData, IBarChartData, IChartData, IChartDataset, IBarChartDataset, WaitColumnColor, WorkColumnColor, NotSetColor, GetWaitWorkPieChartData} from "./ChartingInfo"
+import {GetWaitWorkBarChartData, IBarChartData, IChartData, IChartDataset, IBarChartDataset, WaitColumnColor, WorkColumnColor, NotSetColor, GetWaitWorkPieChartData, BarCharOptions} from "./ChartingInfo"
 
 
 
@@ -1102,7 +1102,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                         <div>
                                             <Card className="flex-column flex-grow chartColumnCard">
                                                 <div className="flex-grow">
-                                                <Bar data={timeBarData}   height={250}/>
+                                                <Bar data={timeBarData} options={BarCharOptions} height={250}/>
                                                 </div>
                                                 
                                                 <div  className="flex-grow" style={{minWidth:"450px"}}>

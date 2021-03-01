@@ -44,6 +44,18 @@ export function GetWaitWorkBarChartData(waittime:number, worktime:number): IBarC
     return result;
 }
 
+export const BarCharOptions = {
+    scales: {
+      yAxes: [
+        {
+          ticks: {
+            beginAtZero: true,
+          },
+        },
+      ],
+    },
+  }
+
 export function GetWaitWorkPieChartData(waittime:number, worktime:number, notsettime:number):IChartData
 {
 

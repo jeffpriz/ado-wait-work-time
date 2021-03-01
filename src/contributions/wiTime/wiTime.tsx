@@ -890,10 +890,6 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     private CalculateFlowEfficeincy(waitTimeInfo:ICategory, workTimeInfo:ICategory):number
     {
         let result:number = 0;
-
-        console.log("total wait time " + waitTimeInfo.stats.total.toString());
-        console.log(" total Work time " + workTimeInfo.stats.total.toString());
-
         let totalTime:number = waitTimeInfo.stats.total + workTimeInfo.stats.total;
         if(totalTime > 0)
         {

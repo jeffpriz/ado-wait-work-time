@@ -12,7 +12,7 @@ import { Spinner, SpinnerSize } from "azure-devops-ui/Spinner";
 import { ScrollableList, IListItemDetails, ListSelection, ListItem } from "azure-devops-ui/List";
 import { DropdownSelection } from "azure-devops-ui/Utilities/DropdownSelection";
 import { Header, TitleSize } from "azure-devops-ui/Header";
-import { CommonServiceIds, IProjectPageService, getClient } from "azure-devops-extension-api";
+import { CommonServiceIds, IProjectPageService,IGlobalMessagesService, getClient } from "azure-devops-extension-api";
 import {WorkRestClient, BacklogConfiguration, TeamFieldValues, Board, BoardColumnType, BacklogLevelConfiguration} from "azure-devops-extension-api/Work";
 import { WorkItemTrackingRestClient,  WorkItem, WorkItemQueryResult, Wiql, WorkItemReference } from "azure-devops-extension-api/WorkItemTracking";
 import { ProcessInfo, ProcessWorkItemType, WorkItemTrackingProcessRestClient, GetWorkItemTypeExpand } from "azure-devops-extension-api/WorkItemTrackingProcess"
@@ -68,7 +68,7 @@ interface ICategory
 
 class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState> {
     private readonly dayMilliseconds:number = ( 24 * 60 * 60 * 1000);
-    private toastRef: React.RefObject<Toast> = React.createRef<Toast>();
+    //private toastRef: React.RefObject<Toast> = React.createRef<Toast>();
     private dateSelection:DropdownSelection;
     private backlogSelection:DropdownSelection;
     private dateSelectionChoices = [        
@@ -406,7 +406,6 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         }
         finally
         {
-
             let backlogLevelConfig:BacklogLevelConfiguration|undefined = undefined;
             if(this.state.teamBacklogConfig)
             {
@@ -921,9 +920,22 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     };
 
     ///Toast Error
-    private toastError(toastText:string)
+    private async toastError(toastText:string)
     {
-        this.setState({isToastVisible:true, isToastFadingOut:false, exception:toastText})
+        const globalMessagesSvc = await SDK.getService<IGlobalMessagesService>(CommonServiceIds.GlobalMessagesService);
+        globalMessagesSvc.addToast({        
+            duration: 3000,
+            message: toastText        
+        });
+        //this.setState({isToastVisible:true, isToastFadingOut:false, exception:toastText})
+    }
+
+    
+    private onCallToActionClick(event?: React.MouseEvent<HTMLButtonElement>):void
+    {
+        
+        
+        this.setState({isToastFadingOut:true, isToastVisible:false,exception:""})
     }
 
 
@@ -1174,14 +1186,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                         
                     </Card>
                     
-                    {isToastVisible && (
-                        <Toast
-                            ref={this.toastRef}
-                            message={exception}
-                            callToAction="OK"
-                            onCallToActionClick={() => {this.setState({isToastFadingOut:true, isToastVisible:false,exception:""})}}
-                            />
-                        )}
+
 
                 </Page>
             )
@@ -1200,14 +1205,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                         
                     </Card>
                     
-                    {isToastVisible && (
-                        <Toast
-                            ref={this.toastRef}
-                            message={exception}
-                            callToAction="OK"
-                            onCallToActionClick={() => {this.setState({isToastFadingOut:true, isToastVisible:false,exception:""})}}
-                            />
-                        )}
+
 
                 </Page>
                 );

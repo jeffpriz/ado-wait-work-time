@@ -60,9 +60,6 @@ export function GetWaitWorkPieChartData(waittime:number, worktime:number, notset
 {
 
     let result:IChartData = {labels:[], datasets:[]};
-
-    //result.labels.push("Time in Hours");
-
     result.labels.push("Total Wait Time (days)");
     result.labels.push("Total Work Time (days)");
     result.labels.push("Total Not Set Time (days)");

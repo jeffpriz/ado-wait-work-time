@@ -17,9 +17,7 @@ export interface IDuration
     milliseconds:number
 }
 
-export function getMillisecondsToTime(duration:number):IDuration {
-    //let duration:number = endTime.valueOf() - startTime.valueOf();
-    
+export function getMillisecondsToTime(duration:number):IDuration {    
         let remain = duration
       
         let days = Math.floor(remain / (1000 * 60 * 60 * 24))

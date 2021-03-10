@@ -1,9 +1,5 @@
-import * as React from "react";
-import * as SDK from "azure-devops-extension-sdk";
-import * as API from "azure-devops-extension-api";
-import { ProcessInfo, ProcessWorkItemType, WorkItemTrackingProcessRestClient, GetWorkItemTypeExpand } from "azure-devops-extension-api/WorkItemTrackingProcess"
-
-import {CoreRestClient, WebApiTeam, TeamContext, ProjectProperty,  } from "azure-devops-extension-api/Core";
+import {ProcessWorkItemType, WorkItemTrackingProcessRestClient, GetWorkItemTypeExpand } from "azure-devops-extension-api/WorkItemTrackingProcess"
+import {CoreRestClient, ProjectProperty,  } from "azure-devops-extension-api/Core";
 
 export function GetProjectProcessList(client:WorkItemTrackingProcessRestClient)
 {
@@ -14,26 +10,16 @@ export function GetProjectProcessList(client:WorkItemTrackingProcessRestClient)
 export async function GetWorkItemListForProcessTemplate(client:WorkItemTrackingProcessRestClient, processTemplateId:string):Promise<ProcessWorkItemType[]>
 {
     
-    let result:Promise<ProcessWorkItemType[]> = client.getProcessWorkItemTypes(processTemplateId,GetWorkItemTypeExpand.States);
-
-    return result;    
-}
+    return client.getProcessWorkItemTypes(processTemplateId,GetWorkItemTypeExpand.States);
+}    
 
 
 export async function GetProjectProperties(client:CoreRestClient, projectId:string): Promise<ProjectProperty[]>
 {
+    let result:Promise<ProjectProperty[]>; 
 
-    let result:Promise<ProjectProperty[]>;
-    
-
-    result = client.getProjectProperties(projectId)
-
-    //let thisPRoperty:ProjectProperty[] = await result;
-
-    
-    return result;
-    
-
+    result = client.getProjectProperties(projectId)    
+    return result;   
 }
 
 
@@ -69,9 +55,8 @@ export async function GetProcessWorkItemDetails(coreRestClient:CoreRestClient,wi
     }
     else
     {
-        return new Promise<ProcessWorkItemType[]>(async(resolve,reject) => {
-            reject("No project template property found for the project: " + projectProps);
-        });
+        return Promise.reject("No project template property found for the project: " + projectProps);
+        
     }
     
 }

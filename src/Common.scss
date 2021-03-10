@@ -1,36 +1,35 @@
 #root {
-    height: 100%;
-    width: 100%;
-    display: flex;
-}
-.amcharts-chart-div a {display:none !important;}
-#root {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     padding: 10px;
+    height: 100%;
+    width: 100%;
+    display: flex;
   }
+.amcharts-chart-div a {display:none !important;}
 
-  .teamDropDown
-  {
-      width: 250px;
-  }
+.teamDropDown
+{
+    width: 250px;
+}
 
-  .backlogDropDown
-  {
-      width:200px;
-  }
+.backlogDropDown
+{
+    width:200px;
+}
 
-  .daysDropDown
-  {
-      width:200px;
-  }
+.daysDropDown
+{
+    width:200px;
+}
 
-  .selectionCard
-  {
-      min-height: 85px;
-  }
-  .list-example-row {
+.selectionCard
+{
+    min-height: 85px;
+}
+.list-example-row 
+{
     padding: 0px 12px;
 }
 

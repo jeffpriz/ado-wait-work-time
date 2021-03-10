@@ -5,29 +5,27 @@ import { showRootComponent } from "../../Common";
 import { Doughnut, Bar} from 'react-chartjs-2';
 import { Page } from "azure-devops-ui/Page";
 import { Card } from "azure-devops-ui/Card";
-import { Toast } from "azure-devops-ui/Toast";
 
 import {Dropdown} from "azure-devops-ui/Dropdown";
 import { Spinner, SpinnerSize } from "azure-devops-ui/Spinner";
 import { ScrollableList, IListItemDetails, ListSelection, ListItem } from "azure-devops-ui/List";
 import { DropdownSelection } from "azure-devops-ui/Utilities/DropdownSelection";
-import { Header, TitleSize } from "azure-devops-ui/Header";
+import { Header } from "azure-devops-ui/Header";
 import { CommonServiceIds, IProjectPageService,IGlobalMessagesService, getClient } from "azure-devops-extension-api";
 import {WorkRestClient, BacklogConfiguration, TeamFieldValues, Board, BoardColumnType, BacklogLevelConfiguration} from "azure-devops-extension-api/Work";
 import { WorkItemTrackingRestClient,  WorkItem, WorkItemQueryResult, Wiql, WorkItemReference } from "azure-devops-extension-api/WorkItemTracking";
-import { ProcessInfo, ProcessWorkItemType, WorkItemTrackingProcessRestClient, GetWorkItemTypeExpand } from "azure-devops-extension-api/WorkItemTrackingProcess"
+import {  ProcessWorkItemType, WorkItemTrackingProcessRestClient } from "azure-devops-extension-api/WorkItemTrackingProcess"
 import {CoreRestClient, WebApiTeam, TeamContext } from "azure-devops-extension-api/Core";
 import * as workItemInterfaces from "./WorkItemInfo";
-import { IListBoxItem, ListBoxItemType } from "azure-devops-ui/ListBox";
+import { IListBoxItem} from "azure-devops-ui/ListBox";
 import { Table } from "azure-devops-ui/Table";
 import * as WITableSetup from "./WITableSetup";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import * as TimeCalc from "./Time";
 import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
-import { timeout } from "azure-devops-ui/Core/Util/Promise";
 import * as ADOProcess from "./ADOProjectCalls";
-import {GetWaitWorkBarChartData, IBarChartData, IChartData, IChartDataset, IBarChartDataset, WaitColumnColor, WorkColumnColor, NotSetColor, GetWaitWorkPieChartData, BarCharOptions} from "./ChartingInfo"
+import {GetWaitWorkBarChartData, IBarChartData, IChartData, GetWaitWorkPieChartData, BarCharOptions} from "./ChartingInfo"
 
 
 
@@ -228,9 +226,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                 {reject("No Project");}
             }
             catch(ex){
-                //this.toastError(ex.toString());
-                reject(ex);
-                
+                reject(ex);                
             }
 
         });
@@ -239,11 +235,8 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
 
     private getDateInThePast(numberOfDaysAgo:number):Date
-    {
-        
-        let RetDate:Date = new Date(new Date().getTime() - (numberOfDaysAgo * this.dayMilliseconds));
-
-        return RetDate;
+    {        
+        return new Date(new Date().getTime() - (numberOfDaysAgo * this.dayMilliseconds));
     }
 
 
@@ -388,10 +381,9 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                 backlogWorkItemTypes = this.GetWorkItemTypesForBacklog(c);
             }
 
-            let teamInfo:WebApiTeam =  await teamInfoProm;
+            await teamInfoProm;
             let dateOffset = this.state.dateOffset;
             await this.DoGetData(backlogWorkItemTypes,dateOffset);
-            //await this.GetWorkItemReporting(backlogWorkItemTypes);
             teamBacklogLevels = this.getListOfBacklogLevels();
             this.backlogSelection.select(0);
             let boardColumnData:workItemInterfaces.IBoardColumnStat[] = this.state.boardColumnData;
@@ -478,17 +470,10 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
     private async DoGetData(backlogWorkItemTypes:string[], offsetDays:number)
     {
-//        let updatedWorkItems:ReportingWorkItemRevisionsBatch = await this.GetWorkItemReportingLatestByDateRange(backlogWorkItemTypes,this.getDateInThePast(offsetDays));
-
         let workItemsToCalculate:WorkItemReference[] = await this.GetWorkItemsByQuery(backlogWorkItemTypes, offsetDays);
-        
-        //let itemsToCalculate:number[] = await this.CollectClosedBacklogItems(updatedWorkItems);
         let workItemsHistory:workItemInterfaces.IWorkItemWithHistory[] = await this.GetAllWorkItemsHistory(workItemsToCalculate);
-
-
         let calculatedData:workItemInterfaces.IWorkItemStateHistory[] =  this.CalculateBoardColumnTime(workItemsHistory);
         let boardColumns:workItemInterfaces.IBoardColumnStat[] = this.GatherDistinctBoardColumns(calculatedData);
-
         this.CalculateBoardColumnAverages(boardColumns);
         this.setState({boardColumnData:boardColumns});
         this.CollectAllWorkItemRevisionForTable(calculatedData);
@@ -500,8 +485,6 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
     private ReDoCategoryCalcs(categoryInfo: ICategory[])
     {
-        
-        //let categoryInfo = this.state.categories;
         let waitCat:ICategory | undefined = categoryInfo.find(c => c.categoryName == this.WAIT_CAT_NAME);
         let workCat:ICategory | undefined = categoryInfo.find(c => c.categoryName == this.WORK_CAT_NAME);
         let notSetCat:ICategory | undefined = categoryInfo.find(c => c.categoryName == this.NOT_SET_NAME);
@@ -573,8 +556,6 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     private GetBoardColumnCategory(boardColumnName:string):workItemInterfaces.columnCategoryChoices
     {
         let result:workItemInterfaces.columnCategoryChoices = workItemInterfaces.columnCategoryChoices.NotSet;
-
-        let categoryInfo:ICategory[] = this.state.categories;
         try {
             if(this.GetWorkItemCategory(this.WORK_CAT_NAME).boardColumnNames.find(c=>c == boardColumnName))
             {
@@ -1032,17 +1013,12 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     }
 
     public render(): JSX.Element {
-        let projectName = this.state.projectName;
-        let isToastVisible = this.state.isToastVisible;
-        let exception = this.state.exception;
         let doneLoading = this.state.doneLoading;
-        let workItemHistory:workItemInterfaces.IWorkItemStateHistory[] = this.state.workItemHistory;
         let teamList:Array<IListBoxItem<{}>> = this.state.teamList;
         let backlogLevelList:Array<IListBoxItem<{}>> = this.state.teamBacklogLevelsList;
         let loadingWorkItems:boolean = this.state.loadingWorkItems;
         let requirementName:string = "";
-        let selection = new ListSelection(true);
-        let boardColumnCount:number = this.state.boardColumnData.length;
+        let selection = new ListSelection(true);        
         let tableItems = new ArrayItemProvider<workItemInterfaces.IWorkItemTableDisplay>(this.state.workItemRevTableData);
         let boardColumnList = new ArrayItemProvider<workItemInterfaces.IBoardColumnStat>(this.state.boardColumnData);
         let workCategoryInfo = this.GetWorkItemCategory(this.WORK_CAT_NAME);

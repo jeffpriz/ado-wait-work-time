@@ -50,5 +50,5 @@ export interface IBoardColumnWorkItemTime
 export function CompareWorkItemStateRev(wi1: IWorkItemStateInfo, wi2:IWorkItemStateInfo)
 {
     if(wi1.revNum > wi2.revNum) {return -1;}
-    if(wi2.revNum < wi2.revNum) {return 1;}
+    if(wi1.revNum < wi2.revNum) {return 1;}
 }

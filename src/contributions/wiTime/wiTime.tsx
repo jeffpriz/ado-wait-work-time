@@ -116,6 +116,8 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     public async componentDidMount() {        
         await SDK.init();
         await SDK.ready();
+        SDK.getConfiguration()
+        SDK.getExtensionContext()
         const projectService = await SDK.getService<IProjectPageService>(CommonServiceIds.ProjectPageService);
         const project = await projectService.getProject();
         if(project){

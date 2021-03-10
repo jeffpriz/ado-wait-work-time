@@ -1,7 +1,8 @@
 # ado-wait-work-time
 
 [![Build Status](https://dev.azure.com/oneluckidev/OneLuckiDev/_apis/build/status/jeffpriz.ado-wait-work-time?branchName=main)](https://dev.azure.com/oneluckidev/OneLuckiDev/_build/latest?definitionId=36&branchName=main)
-
+![CI Score](https://www.code-inspector.com/project/20024/score/svg)
+![CI Grade](https://www.code-inspector.com/project/20024/status/svg)
 
 Azure DevOps extension to put a Work Item hub on the site to report the average time that a backlog work item spends in board columns.  
 

@@ -7,17 +7,20 @@ export interface IWorkItemStateInfo
     boardColumn:string,
     boardColumnStartTime:Date,
     timeInColumn:number;
+    workItemTitle:string
 }
 
 export interface IWorkItemWithHistory
 {
     id: number,
+    title: string,
     history:WorkItem[]
 }
 
 export interface IWorkItemTableDisplay extends ISimpleTableCell
 {
     workItemID:number,
+    workItemTitle:string,
     revNum: number,
     boardColumn:string,
     boardColumnStartTime:string,
@@ -27,6 +30,7 @@ export interface IWorkItemTableDisplay extends ISimpleTableCell
 export interface IWorkItemStateHistory
 {
     workItemID:number,
+    title: string,
     revisions:IWorkItemStateInfo[]
 }
 

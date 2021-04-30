@@ -698,7 +698,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                 ///So we got all the promises for all the calls for the workitems, so now loop through the results 
                 allResults.forEach((thisResult)=> {
                     //create a new record for us to keep score with
-                    let thisWorkItemDetails:workItemInterfaces.IWorkItemWithHistory = {id:thisResult[0].id,history:[]};
+                    let thisWorkItemDetails:workItemInterfaces.IWorkItemWithHistory = {id:thisResult[0].id, title:thisResult[0].fields["System.Title"],  history:[]};
                     
                     //now inside The results for THIS work item, lets go through the collection of revisions
                     thisResult.forEach((wi) => {          
@@ -740,6 +740,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     private async GetWorkItemWithHistory(workItemID:number) : Promise<WorkItem[]>
     {
         const client = getClient(WorkItemTrackingRestClient);
+        
         return client.getRevisions(workItemID,this.state.projectInfo.id)
     }
 
@@ -756,7 +757,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                 let duration:TimeCalc.IDuration = TimeCalc.getMillisecondsToTime(thisRev.timeInColumn);
                 let durationString:string = duration.days.toString() + " Days, " + duration.hours.toString() + " Hours, " + duration.minutes.toString() + " Minutes, " + duration.seconds.toString() + " Seconds";
                 
-                let dis:workItemInterfaces.IWorkItemTableDisplay = {workItemID:thisRev.workItemID, revNum:thisRev.revNum, boardColumn:thisRev.boardColumn, boardColumnStartTime: thisRev.boardColumnStartTime.toString(), timeInColumn: durationString}
+                let dis:workItemInterfaces.IWorkItemTableDisplay = {workItemID:thisRev.workItemID, workItemTitle: thisRev.workItemTitle, revNum:thisRev.revNum, boardColumn:thisRev.boardColumn, boardColumnStartTime: thisRev.boardColumnStartTime.toString(), timeInColumn: durationString}
                 revs.push(dis);
            });
 
@@ -774,12 +775,12 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         ///let workItemInfo:workItemInterfaces.IWorkItemStateHistory[] = this.state.workItemHistory;
         data.forEach((thisWI) => {
             let i:number = 0;
-            let historyWithTime:workItemInterfaces.IWorkItemStateHistory = {workItemID:thisWI.id,revisions:[]}
+            let historyWithTime:workItemInterfaces.IWorkItemStateHistory = {workItemID:thisWI.id,revisions:[], title:thisWI.title.toString()}
 
             let topNdx = thisWI.history.length -1;
             for(i=0; i < thisWI.history.length; i++)
             {
-                let thisRev:workItemInterfaces.IWorkItemStateInfo = {workItemID: thisWI.id,revNum:thisWI.history[i].rev,boardColumn:thisWI.history[i].fields["System.BoardColumn"],boardColumnStartTime:thisWI.history[i].fields["System.ChangedDate"],timeInColumn:0}
+                let thisRev:workItemInterfaces.IWorkItemStateInfo = {workItemID: thisWI.id, workItemTitle:thisWI.title,  revNum:thisWI.history[i].rev,boardColumn:thisWI.history[i].fields["System.BoardColumn"],boardColumnStartTime:thisWI.history[i].fields["System.ChangedDate"],timeInColumn:0}
                 if(i == topNdx)
                 {
                     let thisDate:Date =thisWI.history[i].fields["System.ChangedDate"];

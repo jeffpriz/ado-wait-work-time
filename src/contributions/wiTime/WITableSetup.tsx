@@ -5,24 +5,31 @@ import { ObservableValue } from "azure-devops-ui/Core/Observable";
 export const workItemColumns = [
 {
     id: "workItemID",
-    name: "Work Item ID",
+    name: "ID",
     readonly: true,
     renderCell: renderSimpleCell,
-    width: new ObservableValue(-10),
+    width: new ObservableValue(-8),
 },
 {
     id: "revNum",
-    name: "Rev. Numer",
+    name: "Rev.",
     readonly: true,
     renderCell: renderSimpleCell,
-    width: new ObservableValue(-10),
+    width: new ObservableValue(-8),
+},
+{
+    id: "workItemTitle",
+    name: "Title",
+    readonly: true,
+    renderCell: renderSimpleCell,
+    width: new ObservableValue(-35),
 },
 {
     id:"boardColumn",
     name: "Board Column",
     readonly:true,
     renderCell: renderSimpleCell,
-    width: new ObservableValue(-30)
+    width: new ObservableValue(-15)
 },
 {
     id:"boardColumnStartTime",
@@ -36,7 +43,7 @@ export const workItemColumns = [
     name: "Time in this Column",
     readonly:true,
     renderCell: renderSimpleCell,
-    width: new ObservableValue(-40)
+    width: new ObservableValue(-35)
 }
 
 

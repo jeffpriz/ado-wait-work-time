@@ -14,6 +14,7 @@ export interface IWorkItemWithHistory
 {
     id: number,
     title: string,
+    htmlLink: string,
     history:WorkItem[]
 }
 
@@ -21,6 +22,7 @@ export interface IWorkItemTableDisplay extends ISimpleTableCell
 {
     workItemID:number,
     workItemTitle:string,
+    workItemLink:string,
     revNum: number,
     boardColumn:string,
     boardColumnStartTime:string,
@@ -31,6 +33,7 @@ export interface IWorkItemStateHistory
 {
     workItemID:number,
     title: string,
+    htmlLink: string,
     revisions:IWorkItemStateInfo[]
 }
 

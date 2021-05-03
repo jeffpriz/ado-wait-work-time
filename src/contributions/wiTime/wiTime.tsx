@@ -13,7 +13,7 @@ import { DropdownSelection } from "azure-devops-ui/Utilities/DropdownSelection";
 import { Header } from "azure-devops-ui/Header";
 import { CommonServiceIds, IProjectPageService,IGlobalMessagesService, getClient } from "azure-devops-extension-api";
 import {WorkRestClient, BacklogConfiguration, TeamFieldValues, Board, BoardColumnType, BacklogLevelConfiguration} from "azure-devops-extension-api/Work";
-import { WorkItemTrackingRestClient,  WorkItem, WorkItemQueryResult, Wiql, WorkItemReference } from "azure-devops-extension-api/WorkItemTracking";
+import { WorkItemTrackingRestClient,  WorkItem, WorkItemQueryResult, Wiql, WorkItemReference, WorkItemExpand } from "azure-devops-extension-api/WorkItemTracking";
 import {  ProcessWorkItemType, WorkItemTrackingProcessRestClient } from "azure-devops-extension-api/WorkItemTrackingProcess"
 import {CoreRestClient, WebApiTeam, TeamContext } from "azure-devops-extension-api/Core";
 import * as workItemInterfaces from "./WorkItemInfo";
@@ -683,22 +683,30 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     // get all of the revision history for each work Item.
     private async GetAllWorkItemsHistory(workItemsToCollect: WorkItemReference[]): Promise<workItemInterfaces.IWorkItemWithHistory[]>
     {
-        let workItemPromises:Promise<WorkItem[]>[] = [];
+        let workItemRevPromises:Promise<WorkItem[]>[] = [];
+        let workItemDetailPromises:Promise<WorkItem>[] = [];
         return new Promise<workItemInterfaces.IWorkItemWithHistory[]>(async (resolve, reject) => { 
             try{ 
                 let returnResult:workItemInterfaces.IWorkItemWithHistory[] = [];
                 workItemsToCollect.forEach((thisWI) => {
                     let thisPromise:Promise<WorkItem[]> = this.GetWorkItemWithHistory(thisWI.id);
-                    workItemPromises.push(thisPromise);
+                    
+                    
+                    workItemRevPromises.push(thisPromise);
                 });
 
-                let allResults = await Promise.all(workItemPromises);
+                
+                let allResults = await Promise.all(workItemRevPromises);
+                //let detailResutls = await Promise.all(workItemDetailPromises);
 
 
                 ///So we got all the promises for all the calls for the workitems, so now loop through the results 
-                allResults.forEach((thisResult)=> {
+                for(const thisResult of allResults) {
+                //await allResults.forEach(async (thisResult)=>  {
+                    
                     //create a new record for us to keep score with
-                    let thisWorkItemDetails:workItemInterfaces.IWorkItemWithHistory = {id:thisResult[0].id, title:thisResult[0].fields["System.Title"],  history:[]};
+                    let thisWIPromise:Promise<WorkItem> = this.GetWorkItemDetails(thisResult[0].id);
+                    let thisWorkItemDetails:workItemInterfaces.IWorkItemWithHistory = {id:thisResult[0].id, title:thisResult[0].fields["System.Title"],  history:[], htmlLink:""};
                     
                     //now inside The results for THIS work item, lets go through the collection of revisions
                     thisResult.forEach((wi) => {          
@@ -723,8 +731,17 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                             }
                         }
                     });
+                    let wiDetail:WorkItem = await thisWIPromise;
+                    try{
+                        thisWorkItemDetails.htmlLink =  wiDetail._links["html"].href;                
+                    }
+                    catch
+                    {
+                        thisWorkItemDetails.htmlLink = "";
+                    }
                     returnResult.push(thisWorkItemDetails);
-                });
+                }
+                
                 resolve(returnResult);
             }
             catch(ex)
@@ -741,7 +758,15 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     {
         const client = getClient(WorkItemTrackingRestClient);
         
-        return client.getRevisions(workItemID,this.state.projectInfo.id)
+        return client.getRevisions(workItemID,this.state.projectInfo.id, undefined,undefined,WorkItemExpand.Links)
+    }
+
+
+    private async GetWorkItemDetails(workItemID:number) : Promise<WorkItem>
+    {
+        const client = getClient(WorkItemTrackingRestClient);
+        
+        return client.getWorkItem(workItemID,this.state.projectInfo.id, undefined,undefined,WorkItemExpand.Links)
     }
 
 
@@ -757,7 +782,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                 let duration:TimeCalc.IDuration = TimeCalc.getMillisecondsToTime(thisRev.timeInColumn);
                 let durationString:string = duration.days.toString() + " Days, " + duration.hours.toString() + " Hours, " + duration.minutes.toString() + " Minutes, " + duration.seconds.toString() + " Seconds";
                 
-                let dis:workItemInterfaces.IWorkItemTableDisplay = {workItemID:thisRev.workItemID, workItemTitle: thisRev.workItemTitle, revNum:thisRev.revNum, boardColumn:thisRev.boardColumn, boardColumnStartTime: thisRev.boardColumnStartTime.toString(), timeInColumn: durationString}
+                let dis:workItemInterfaces.IWorkItemTableDisplay = {workItemID:thisRev.workItemID, workItemTitle: thisRev.workItemTitle, workItemLink:thisWI.htmlLink, revNum:thisRev.revNum, boardColumn:thisRev.boardColumn, boardColumnStartTime: thisRev.boardColumnStartTime.toString(), timeInColumn: durationString}
                 revs.push(dis);
            });
 
@@ -775,9 +800,11 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         ///let workItemInfo:workItemInterfaces.IWorkItemStateHistory[] = this.state.workItemHistory;
         data.forEach((thisWI) => {
             let i:number = 0;
-            let historyWithTime:workItemInterfaces.IWorkItemStateHistory = {workItemID:thisWI.id,revisions:[], title:thisWI.title.toString()}
+            let historyWithTime:workItemInterfaces.IWorkItemStateHistory = {workItemID:thisWI.id,revisions:[], title:thisWI.title.toString(), htmlLink: thisWI.htmlLink}
 
             let topNdx = thisWI.history.length -1;
+
+            
             for(i=0; i < thisWI.history.length; i++)
             {
                 let thisRev:workItemInterfaces.IWorkItemStateInfo = {workItemID: thisWI.id, workItemTitle:thisWI.title,  revNum:thisWI.history[i].rev,boardColumn:thisWI.history[i].fields["System.BoardColumn"],boardColumnStartTime:thisWI.history[i].fields["System.ChangedDate"],timeInColumn:0}

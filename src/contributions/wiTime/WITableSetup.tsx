@@ -1,13 +1,20 @@
-import { renderSimpleCell } from "azure-devops-ui/Table";
 
+import * as React from "react";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
+import {
+    ITableColumn,
+    renderSimpleCell,
+    SimpleTableCell
+} from "azure-devops-ui/Table";
+import { Link } from "azure-devops-ui/Link";
+import * as workItemInterfaces from "./WorkItemInfo";
 
 export const workItemColumns = [
 {
     id: "workItemID",
     name: "ID",
     readonly: true,
-    renderCell: renderSimpleCell,
+    renderCell: RenderIDLink,
     width: new ObservableValue(-8),
 },
 {
@@ -48,6 +55,35 @@ export const workItemColumns = [
 
 
 ];
+
+export function RenderIDLink(
+    rowIndex: number,
+    columnIndex: number,
+    tableColumn: ITableColumn<workItemInterfaces.IWorkItemTableDisplay>,
+    tableItem: workItemInterfaces.IWorkItemTableDisplay
+): JSX.Element
+{
+    const {     workItemID,  workItemTitle, workItemLink, revNum,  boardColumn, boardColumnStartTime, timeInColumn} = tableItem;
+    return (
+
+        <SimpleTableCell
+            columnIndex={columnIndex}
+            tableColumn={tableColumn}
+            key={"col-" + columnIndex}
+            contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
+        >
+          <Link
+                        subtle={true}
+                        excludeTabStop
+                        href={workItemLink}
+                        target="_blank"
+           >
+                        {workItemID}
+                    </Link>
+        </SimpleTableCell>
+    );
+}
+
 
 export const WIListColumns = [
     {

@@ -9,19 +9,50 @@
   }
 .amcharts-chart-div a {display:none !important;}
 
+.teamDropDownFF
+{
+    width:325px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 .teamDropDown
 {
-    width: 250px;
+    width: 305px;
 }
 
+.backlogDropDownFF
+{
+    width:270px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
 .backlogDropDown
 {
-    width:200px;
+    width:250px;
 }
 
+
+.daysDropDownFF
+{
+    width:220px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
 .daysDropDown
 {
     width:200px;
+}
+
+.tagsTextFF
+{
+    width:400px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.tagsTextField
+{
+    width:370px;
 }
 
 .selectionCard

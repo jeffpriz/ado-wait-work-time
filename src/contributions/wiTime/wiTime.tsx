@@ -5,7 +5,7 @@ import { showRootComponent } from "../../Common";
 import { Doughnut, Bar} from 'react-chartjs-2';
 import { Page } from "azure-devops-ui/Page";
 import { Card } from "azure-devops-ui/Card";
-
+import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import {Dropdown} from "azure-devops-ui/Dropdown";
 import { Spinner, SpinnerSize } from "azure-devops-ui/Spinner";
 import { ScrollableList, IListItemDetails, ListSelection, ListItem } from "azure-devops-ui/List";
@@ -25,6 +25,8 @@ import * as TimeCalc from "./Time";
 import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
 import * as ADOProcess from "./ADOProjectCalls";
+import { FormItem } from "azure-devops-ui/FormItem";
+import { TextField, TextFieldWidth } from "azure-devops-ui/TextField";
 import {GetWaitWorkBarChartData, IBarChartData, IChartData, GetWaitWorkPieChartData, BarCharOptions} from "./ChartingInfo"
 
 
@@ -53,6 +55,8 @@ interface IWorkItemTimeContentState {
     exception:string;
     detailsCollapsed:boolean;
     categories:ICategory[];
+    tagExclusions:string[];
+    backlogWorkItemTypes:string[];
 }
 
 
@@ -80,7 +84,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     ];
 
 
-
+    private tagListObservable: ObservableValue<string>;
     private readonly WAIT_CAT_NAME:string = "Wait";
     private readonly WORK_CAT_NAME:string = "Work";
     private readonly NOT_SET_NAME:string = "Not Set";
@@ -93,10 +97,11 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     constructor(props:{}) {
         super(props);
         
-        let initState:IWorkItemTimeContentState = {projectInfo:{id:"", name:""}, projectName:"",team:"",isToastVisible :false, isToastFadingOut:false, foundCompletedPRs: false, doneLoading: false, exception:"", teamList:[], teamBoard:undefined, teamBacklogConfig:undefined, workItemHistory:[], teamFields:{_links:undefined, url:"", values:[],defaultValue:"", field:{referenceName:"", url:""}}, workItemRevTableData:[],loadingWorkItems:false, boardColumnData:[], detailsCollapsed:true, dateOffset:30, categories:this.getInitializedCategoryInfo(), workItemCount:0,workItemProcessDetails:[], teamBacklogLevelsList:[], backlogLevelConfig:undefined};
+        let initState:IWorkItemTimeContentState = {projectInfo:{id:"", name:""}, projectName:"",team:"",isToastVisible :false, isToastFadingOut:false, foundCompletedPRs: false, doneLoading: false, exception:"", teamList:[], teamBoard:undefined, teamBacklogConfig:undefined, workItemHistory:[], teamFields:{_links:undefined, url:"", values:[],defaultValue:"", field:{referenceName:"", url:""}}, workItemRevTableData:[],loadingWorkItems:false, boardColumnData:[], detailsCollapsed:true, dateOffset:30, categories:this.getInitializedCategoryInfo(), workItemCount:0,workItemProcessDetails:[], teamBacklogLevelsList:[], backlogLevelConfig:undefined, tagExclusions:[], backlogWorkItemTypes:[]};
         this.dateSelection = new DropdownSelection();
         this.backlogSelection = new DropdownSelection();
         this.dateSelection.select(0);
+        this.tagListObservable = new ObservableValue<string>("");
         
         this.state = initState;
 
@@ -275,7 +280,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
 
     //Builds the WIQ to query the Work Items based on the filters the user has selected
-    private async GetWorkItemsByQuery(workItemTypes:string[], dateOffset:number):Promise<WorkItemReference[]>
+    private async GetWorkItemsByQuery(workItemTypes:string[], dateOffset:number, tagList:string[]):Promise<WorkItemReference[]>
     {
 
         const client = getClient(WorkItemTrackingRestClient);
@@ -325,7 +330,20 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                     {
                         wiqlAreaPaths = " = '" + ap.value + "'";
                     }
-                    query = "SELECT [System.Id], [System.WorkItemType], [System.State], [System.AreaPath] FROM workitems WHERE [System.TeamProject] = '" + project  + "' AND [System.WorkItemType] in " + wiqlWorkItemTypes + " AND [Microsoft.vsts.Common.ClosedDate] > @today-" + dateOffset.toString() + " AND [System.AreaPath] " + wiqlAreaPaths + " AND [System.State] in " + wiqlClosedStates  + " ORDER BY [System.ChangedDate] DESC";
+                    
+                    if(tagList.length > 0)
+                    {
+                        let tagWIQL:string = "";
+                        tagList.forEach((thisTag)=>{
+                            tagWIQL = tagWIQL + "AND NOT [System.Tags] CONTAINS '" + thisTag.trim() + " ' ";
+                        });
+                        
+                        query = "SELECT [System.Id], [System.WorkItemType], [System.State], [System.AreaPath] FROM workitems WHERE [System.TeamProject] = '" + project  + "' AND [System.WorkItemType] in " + wiqlWorkItemTypes + " AND [Microsoft.vsts.Common.ClosedDate] > @today-" + dateOffset.toString() + " AND [System.AreaPath] " + wiqlAreaPaths + " AND [System.State] in " + wiqlClosedStates + " " +  tagWIQL  + "ORDER BY [System.ChangedDate] DESC";
+                    }
+                    else
+                    {
+                        query = "SELECT [System.Id], [System.WorkItemType], [System.State], [System.AreaPath] FROM workitems WHERE [System.TeamProject] = '" + project  + "' AND [System.WorkItemType] in " + wiqlWorkItemTypes + " AND [Microsoft.vsts.Common.ClosedDate] > @today-" + dateOffset.toString() + " AND [System.AreaPath] " + wiqlAreaPaths + " AND [System.State] in " + wiqlClosedStates  + " ORDER BY [System.ChangedDate] DESC";
+                    }
                     console.log(query);
                     let q:Wiql = {query: query};
                     queryResultPromises.push(client.queryByWiql(q,project,team,false,1000));
@@ -350,6 +368,18 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             }
 
         });
+    }
+
+
+    private SplitTagsValue(tagString:string):string[]
+    {
+        let tagList:string[] = [];
+        if(tagString.trim().length > 0)
+        {
+            tagList = tagString.split(',');
+            tagList.forEach((thisTag)=>{ console.log("The Tag is : " + thisTag), thisTag = thisTag.trim(); });
+        }
+        return tagList;
     }
 
 
@@ -381,9 +411,10 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
         this.setState({loadingWorkItems:true,categories:this.getInitializedCategoryInfo()});
         let teamBacklogLevels:Array<IListBoxItem<{}>> = [];
+        let backlogWorkItemTypes:string[] = [];
         try {
             
-            let backlogWorkItemTypes:string[] = [];
+            
             let teamInfoProm:Promise<WebApiTeam> = this.GetTeam(teamId);
             await this.GetTeamConfig(teamId);
             let backlogConfig:BacklogConfiguration|undefined = this.state.teamBacklogConfig;
@@ -416,7 +447,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             {
                 backlogLevelConfig = this.state.teamBacklogConfig.requirementBacklog;
             }
-            this.setState({loadingWorkItems:false, team:teamId, teamBacklogLevelsList:teamBacklogLevels, backlogLevelConfig: backlogLevelConfig});
+            this.setState({loadingWorkItems:false, team:teamId, teamBacklogLevelsList:teamBacklogLevels, backlogLevelConfig: backlogLevelConfig, backlogWorkItemTypes:backlogWorkItemTypes});
         }
     }
 
@@ -441,7 +472,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                 });
             }
             let workItemTypes:string[] = this.GetWorkItemTypesForBacklog(backlogLevelConfig)
-            this.setState({backlogLevelConfig: backlogLevelConfig});
+            this.setState({backlogLevelConfig: backlogLevelConfig, backlogWorkItemTypes:workItemTypes});
             await this.DoGetData(workItemTypes,this.state.dateOffset);
             
         }
@@ -486,16 +517,35 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         this.setState({dateOffset:dateOffset, loadingWorkItems:false});
     }
 
+    private async DoTagFilter()
+    {
+        this.setState({loadingWorkItems:true});
+        try
+        {
+            console.log("tags are: " + this.tagListObservable.value);
+            await this.DoGetData(this.state.backlogWorkItemTypes, this.state.dateOffset);
+        }
+        catch(e) 
+        {
+            console.log("error tag filtering: " + e.toString());
+        }
+        finally 
+        {
+            this.setState({loadingWorkItems:false});
+        }
+
+    }
 
     //Coordinates the calls to get the Work Item data from ADO and then calls to perform processing and calculations against that information for display and charting
     private async DoGetData(backlogWorkItemTypes:string[], offsetDays:number)
     {
-        let workItemsToCalculate:WorkItemReference[] = await this.GetWorkItemsByQuery(backlogWorkItemTypes, offsetDays);
+        let tagList:string[] = this.SplitTagsValue(this.tagListObservable.value);        
+        let workItemsToCalculate:WorkItemReference[] = await this.GetWorkItemsByQuery(backlogWorkItemTypes, offsetDays, tagList);
         let workItemsHistory:workItemInterfaces.IWorkItemWithHistory[] = await this.GetAllWorkItemsHistory(workItemsToCalculate);
         let calculatedData:workItemInterfaces.IWorkItemStateHistory[] =  this.CalculateBoardColumnTime(workItemsHistory);
         let boardColumns:workItemInterfaces.IBoardColumnStat[] = this.GatherDistinctBoardColumns(calculatedData);
         this.CalculateBoardColumnAverages(boardColumns);
-        this.setState({boardColumnData:boardColumns});
+        this.setState({boardColumnData:boardColumns, tagExclusions:tagList});
         this.CollectAllWorkItemRevisionForTable(calculatedData);
         this.ReDoCategoryCalcs(this.state.categories);
     }
@@ -999,6 +1049,19 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         return result;
     }
 
+    private tagTextonChange = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+        newValue: string
+    ) => {
+        this.tagListObservable.value = newValue;
+    };
+
+    private tagButtonClick = () => {
+
+        this.DoTagFilter();
+        
+    }
+
 
     //for a given board column generates the List Item object to put in to the List rendered out to the user
     private renderBoardColumnListRow = (
@@ -1100,14 +1163,31 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             return (
                 <Page className="flex-grow prinfo-hub">
                     <Card className="selectionCard flex-row" titleProps={{text: "Selections"}} >
-                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"center", minWidth:"200px"}}>
-                            Teams: &nbsp; &nbsp;<Dropdown items={teamList} placeholder="Select a Team" ariaLabel="Basic" className="teamDropDown" onSelect={this.selectTeam} /> &nbsp;&nbsp;
+                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"left", minWidth:"325px"}}>
+                            <FormItem className="teamDropDownFF" label="Team: " message="Select the team you want to examine the board for">
+                                <Dropdown items={teamList} placeholder="Select a Team" ariaLabel="Basic" className="teamDropDown" onSelect={this.selectTeam} /> 
+                            </FormItem>
                         </div>
-                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"center", minWidth:"200px"}}>
-                            Backlog Level: &nbsp; &nbsp;<Dropdown items={backlogLevelList} ariaLabel="Basic" className="backlogDropDown" selection={this.backlogSelection} onSelect={this.selectBacklog} /> &nbsp; &nbsp;
+                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"left", minWidth:"270px"}}>
+                            <FormItem className="backlogDropDownFF" label="Backlog Level: &nbsp;" message="Choose which board you'd like to look at">    
+                                <Dropdown items={backlogLevelList} ariaLabel="Basic" className="backlogDropDown" selection={this.backlogSelection} onSelect={this.selectBacklog} />
+                            </FormItem>
                         </div>
-                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"center", minWidth:"200px"}}>
-                            Work Items Closed in : &nbsp;&nbsp; <Dropdown ariaLabel="Basic" className="daysDropDown" items={this.dateSelectionChoices} selection={this.dateSelection} onSelect={this.SelectDays} />  
+                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"left", minWidth:"220px"}}>
+                        <FormItem className="daysDropDownFF" label="Work Items Closed in: &nbsp;" message="Select the timeframe you want to look at">    
+                            <Dropdown ariaLabel="Basic" className="daysDropDown" items={this.dateSelectionChoices} selection={this.dateSelection} onSelect={this.SelectDays} />  
+                        </FormItem>
+                        </div>
+                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"left", minWidth:"400px"}}>
+                        <FormItem className="tagsTextFF" label="Work Item Tags to Exclude : &nbsp;" message="Comma separated list of tags you don't want included in the calculation">
+                            <TextField  ariaLabel="Basic" className="tagsTextField" value={this.tagListObservable} placeholder="Tag list (ex. 'outlier')" onChange={this.tagTextonChange} />  
+                           
+                        </FormItem>
+                        <Button
+                            text="Apply Tag Filter"
+                            primary={false}
+                            onClick={this.tagButtonClick}                            
+                        />
                         </div>
                         
                     </Card>
@@ -1131,6 +1211,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                         <div>
                                             <Card className="flex-column flex-grow efficiencyColumnCard" titleProps={{text:"Flow Efficiency %"}}>
                                                 <table>
+                                                    <tbody>
                                                     <tr>
                                                         <td>
                                                         <div className="flex-grow efficiencyText flex-row">                                                    
@@ -1145,6 +1226,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                                         </div>
                                                         </td>
                                                     </tr>
+                                                    </tbody>
                                                 </table>
                                                 
                                                 
@@ -1171,6 +1253,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                             <div className="flex-row">
                                                 <Card className="flex-column categoryColumnCard">
                                                     <table className="cat-table">
+                                                        <tbody>
                                                         <tr>
                                                             <td>
                                                                 <Header title="Wait Times" className="cat-wait-header"></Header>
@@ -1183,11 +1266,13 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                                                 </div>
                                                             </td>
                                                         </tr>
+                                                        </tbody>
                                                     </table>
                                                 </Card>
                                                 <Card className="flex-column categoryColumnCard">
                                                                                         
                                                     <table className="cat-table">
+                                                        <tbody>
                                                         <tr>
                                                             <td>
                                                                 <Header title="Work Times" className="cat-work-header"></Header>
@@ -1201,6 +1286,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                                                 </div>
                                                             </td>
                                                         </tr>
+                                                        </tbody>
                                                     </table>
                                                 
                                                 </Card>
@@ -1233,11 +1319,14 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             else {
                 return (
                     <Page className="flex-grow prinfo-hub">
-                    <Card className="selectionCard" titleProps={{text: "Selections"}}>
-                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"center", minWidth:"500px", display:"hidden"}}>
-                            Teams: <Dropdown items={teamList} placeholder="Select a Team" ariaLabel="Basic" className="teamDropDown" onSelect={this.selectTeam}  />
+                    <Card className="selectionCard flex-row" titleProps={{text: "Selections"}} >
+                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"left", minWidth:"325px"}}>
+                            <FormItem className="teamDropDownFF" label="Team: " message="Select the team you want to examine the board for">
+                                <Dropdown items={teamList} placeholder="Select a Team" ariaLabel="Basic" className="teamDropDown" onSelect={this.selectTeam} /> 
+                            </FormItem>
                         </div>
                     </Card>
+
                     <Card>
                         
                     <Spinner label="Loading ..." size={SpinnerSize.large} />

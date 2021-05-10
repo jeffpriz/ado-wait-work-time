@@ -66,20 +66,10 @@ export function RenderIDLink(
     const {     workItemID,  workItemTitle, workItemLink, revNum,  boardColumn, boardColumnStartTime, timeInColumn} = tableItem;
     return (
 
-        <SimpleTableCell
-            columnIndex={columnIndex}
-            tableColumn={tableColumn}
-            key={"col-" + columnIndex}
-            contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
-        >
-          <Link
-                        subtle={true}
-                        excludeTabStop
-                        href={workItemLink}
-                        target="_blank"
-           >
-                        {workItemID}
-                    </Link>
+        <SimpleTableCell columnIndex={columnIndex} tableColumn={tableColumn} key={"col-" + columnIndex} contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden">
+            <Link subtle={false} excludeTabStop href={workItemLink} target="_blank">
+                {workItemID}
+            </Link>
         </SimpleTableCell>
     );
 }

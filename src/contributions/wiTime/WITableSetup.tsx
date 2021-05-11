@@ -14,7 +14,7 @@ export const workItemColumns = [
     id: "workItemID",
     name: "ID",
     readonly: true,
-    renderCell: RenderIDLink,
+    renderCell: renderSimpleCell,
     width: new ObservableValue(-8),
 },
 {
@@ -63,7 +63,7 @@ export function RenderIDLink(
     tableItem: workItemInterfaces.IWorkItemTableDisplay
 ): JSX.Element
 {
-    const {     workItemID,  workItemTitle, workItemLink, revNum,  boardColumn, boardColumnStartTime, timeInColumn} = tableItem;
+    const { workItemID,  workItemLink} = tableItem;
     return (
 
         <SimpleTableCell columnIndex={columnIndex} tableColumn={tableColumn} key={"col-" + columnIndex} contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden">

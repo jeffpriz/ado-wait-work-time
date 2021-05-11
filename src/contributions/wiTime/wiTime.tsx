@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as SDK from "azure-devops-extension-sdk";
-import * as API from "azure-devops-extension-api";
 import { showRootComponent } from "../../Common";
 import { Doughnut, Bar} from 'react-chartjs-2';
 import { Page } from "azure-devops-ui/Page";
@@ -11,7 +10,7 @@ import { Spinner, SpinnerSize } from "azure-devops-ui/Spinner";
 import { ScrollableList, IListItemDetails, ListSelection, ListItem } from "azure-devops-ui/List";
 import { DropdownSelection } from "azure-devops-ui/Utilities/DropdownSelection";
 import { Header } from "azure-devops-ui/Header";
-import { CommonServiceIds, IProjectPageService,IGlobalMessagesService, getClient } from "azure-devops-extension-api";
+import { CommonServiceIds, IProjectPageService,IGlobalMessagesService, getClient, IProjectInfo } from "azure-devops-extension-api";
 import {WorkRestClient, BacklogConfiguration, TeamFieldValues, Board, BoardColumnType, BacklogLevelConfiguration} from "azure-devops-extension-api/Work";
 import { WorkItemTrackingRestClient,  WorkItem, WorkItemQueryResult, Wiql, WorkItemReference, WorkItemExpand } from "azure-devops-extension-api/WorkItemTracking";
 import {  ProcessWorkItemType, WorkItemTrackingProcessRestClient } from "azure-devops-extension-api/WorkItemTrackingProcess"
@@ -26,20 +25,19 @@ import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
 import * as ADOProcess from "./ADOProjectCalls";
 import { FormItem } from "azure-devops-ui/FormItem";
-import { TextField, TextFieldWidth } from "azure-devops-ui/TextField";
+import { TextField } from "azure-devops-ui/TextField";
 import {GetWaitWorkBarChartData, IBarChartData, IChartData, GetWaitWorkPieChartData, BarCharOptions} from "./ChartingInfo"
 
 
 
 interface IWorkItemTimeContentState {
-    projectInfo: API.IProjectInfo 
+    projectInfo: IProjectInfo 
     projectName: string;
     teamBacklogConfig:BacklogConfiguration|undefined;
     teamBoard:Board|undefined,
     teamList: Array<IListBoxItem<{}>>;
     teamBacklogLevelsList:Array<IListBoxItem<{}>>;
     teamFields:TeamFieldValues;
-    workItemHistory:workItemInterfaces.IWorkItemStateHistory[],
     workItemRevTableData:workItemInterfaces.IWorkItemTableDisplay[],
     boardColumnData:workItemInterfaces.IBoardColumnStat[],
     workItemProcessDetails:ProcessWorkItemType[],
@@ -47,12 +45,8 @@ interface IWorkItemTimeContentState {
     workItemCount:number,    
     team: string;
     dateOffset:number;
-    isToastVisible: boolean;
-    isToastFadingOut: boolean;
-    foundCompletedPRs: boolean;
     doneLoading:boolean;
     loadingWorkItems:boolean;
-    exception:string;
     detailsCollapsed:boolean;
     categories:ICategory[];
     tagExclusions:string[];
@@ -97,7 +91,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     constructor(props:{}) {
         super(props);
         
-        let initState:IWorkItemTimeContentState = {projectInfo:{id:"", name:""}, projectName:"",team:"",isToastVisible :false, isToastFadingOut:false, foundCompletedPRs: false, doneLoading: false, exception:"", teamList:[], teamBoard:undefined, teamBacklogConfig:undefined, workItemHistory:[], teamFields:{_links:undefined, url:"", values:[],defaultValue:"", field:{referenceName:"", url:""}}, workItemRevTableData:[],loadingWorkItems:false, boardColumnData:[], detailsCollapsed:true, dateOffset:30, categories:this.getInitializedCategoryInfo(), workItemCount:0,workItemProcessDetails:[], teamBacklogLevelsList:[], backlogLevelConfig:undefined, tagExclusions:[], backlogWorkItemTypes:[]};
+        let initState:IWorkItemTimeContentState = {projectInfo:{id:"", name:""}, projectName:"",team:"",   doneLoading: false,  teamList:[], teamBoard:undefined, teamBacklogConfig:undefined,  teamFields:{_links:undefined, url:"", values:[],defaultValue:"", field:{referenceName:"", url:""}}, workItemRevTableData:[],loadingWorkItems:false, boardColumnData:[], detailsCollapsed:true, dateOffset:30, categories:this.getInitializedCategoryInfo(), workItemCount:0,workItemProcessDetails:[], teamBacklogLevelsList:[], backlogLevelConfig:undefined, tagExclusions:[], backlogWorkItemTypes:[]};
         this.dateSelection = new DropdownSelection();
         this.backlogSelection = new DropdownSelection();
         this.dateSelection.select(0);
@@ -142,7 +136,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         await SDK.ready();
         try {
             
-            const project: API.IProjectInfo | undefined = this.state.projectInfo;
+            const project: IProjectInfo | undefined = this.state.projectInfo;
             if (project) {
                 
                 let coreClient:CoreRestClient = getClient(CoreRestClient);
@@ -164,7 +158,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     private async getTeamsList() {
         await SDK.ready();
         try {
-            const project: API.IProjectInfo | undefined = this.state.projectInfo;
+            const project: IProjectInfo | undefined = this.state.projectInfo;
          const coreClient:CoreRestClient = getClient(CoreRestClient);
             let teamsList:WebApiTeam[] = await coreClient.getTeams(project.id,false,500);
             
@@ -193,7 +187,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         try 
         {
             const wClient:WorkRestClient = getClient(WorkRestClient);
-            const project: API.IProjectInfo | undefined = this.state.projectInfo;
+            const project: IProjectInfo | undefined = this.state.projectInfo;
             if(project)
             {
                 let tc:TeamContext = {projectId: project.id, teamId:teamID, project:"",team:"" };
@@ -224,7 +218,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             {
                 let result:Promise<WebApiTeam>;
                 const cClient:CoreRestClient = getClient(CoreRestClient);
-                const project: API.IProjectInfo | undefined = this.state.projectInfo;
+                const project: IProjectInfo | undefined = this.state.projectInfo;
                 if(project)
                 {
                     
@@ -377,7 +371,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         if(tagString.trim().length > 0)
         {
             tagList = tagString.split(',');
-            tagList.forEach((thisTag)=>{ console.log("The Tag is : " + thisTag), thisTag = thisTag.trim(); });
+            tagList.forEach((thisTag)=>{ thisTag = thisTag.trim(); });
         }
         return tagList;
     }
@@ -733,8 +727,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     // get all of the revision history for each work Item.
     private async GetAllWorkItemsHistory(workItemsToCollect: WorkItemReference[]): Promise<workItemInterfaces.IWorkItemWithHistory[]>
     {
-        let workItemRevPromises:Promise<WorkItem[]>[] = [];
-        let workItemDetailPromises:Promise<WorkItem>[] = [];
+        let workItemRevPromises:Promise<WorkItem[]>[] = [];        
         return new Promise<workItemInterfaces.IWorkItemWithHistory[]>(async (resolve, reject) => { 
             try{ 
                 let returnResult:workItemInterfaces.IWorkItemWithHistory[] = [];
@@ -755,40 +748,19 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                 //await allResults.forEach(async (thisResult)=>  {
                     
                     //create a new record for us to keep score with
-                    let thisWIPromise:Promise<WorkItem> = this.GetWorkItemDetails(thisResult[0].id);
+                    //let thisWIPromise:Promise<WorkItem> = this.GetWorkItemDetails(thisResult[0].id);
                     let thisWorkItemDetails:workItemInterfaces.IWorkItemWithHistory = {id:thisResult[0].id, title:thisResult[0].fields["System.Title"],  history:[], htmlLink:""};
                     
                     //now inside The results for THIS work item, lets go through the collection of revisions
-                    thisResult.forEach((wi) => {          
-                        
-                        if(wi.fields["System.BoardColumn"] == undefined || wi.fields["System.BoardColumn"] == "")
-                        {
-                            wi.fields["System.BoardColumn"] = "No Board Column";
-                        }
-                        
-                        //if this is the first revision for us, we will just push it on the collection
-                        if(thisWorkItemDetails.history.length == 0)
-                        {
-                            thisWorkItemDetails.history.push(wi);
-                        }
-                        //otherwise, we only want to keep the revisions that include a change in the board column
-                        else 
-                        {
-                            //so let's look at this revision's board column and compare it to the previous revsion we have to see if the BoardColumn has changed or not
-                            if(wi.fields["System.BoardColumn"] != thisWorkItemDetails.history[thisWorkItemDetails.history.length-1].fields["System.BoardColumn"])
-                            {
-                                thisWorkItemDetails.history.push(wi);
-                            }
-                        }
-                    });
-                    let wiDetail:WorkItem = await thisWIPromise;
-                    try{
-                        thisWorkItemDetails.htmlLink =  wiDetail._links["html"].href;                
-                    }
-                    catch
-                    {
-                        thisWorkItemDetails.htmlLink = "";
-                    }
+                    this.ProcessWorkItemHistory(thisResult, thisWorkItemDetails);
+                    //let wiDetail:WorkItem = await thisWIPromise;
+                    //try{
+                    //    thisWorkItemDetails.htmlLink =  wiDetail._links["html"].href;                
+                    //}
+                    //catch
+                    //{
+                    //    thisWorkItemDetails.htmlLink = "";
+                    //}
                     returnResult.push(thisWorkItemDetails);
                 }
                 
@@ -797,10 +769,33 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             catch(ex)
             {
                 this.toastError(ex);
-                reject(ex)
+                reject(ex);
             }
         });
 
+    }
+
+    private ProcessWorkItemHistory(thisResult: WorkItem[], thisWorkItemDetails: workItemInterfaces.IWorkItemWithHistory) {
+        thisResult.forEach((wi) => {
+
+            if (wi.fields["System.BoardColumn"] == undefined || wi.fields["System.BoardColumn"] == "") {
+                wi.fields["System.BoardColumn"] = "No Board Column";
+            }
+
+            //if this is the first revision for us, we will just push it on the collection
+            if (thisWorkItemDetails.history.length == 0) {
+                thisWorkItemDetails.history.push(wi);
+            }
+
+
+            //otherwise, we only want to keep the revisions that include a change in the board column
+            else {
+                //so let's look at this revision's board column and compare it to the previous revsion we have to see if the BoardColumn has changed or not
+                if (wi.fields["System.BoardColumn"] != thisWorkItemDetails.history[thisWorkItemDetails.history.length - 1].fields["System.BoardColumn"]) {
+                    thisWorkItemDetails.history.push(wi);
+                }
+            }
+        });
     }
 
     //Gets the Revision history for a given work item
@@ -849,13 +844,13 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         let currentDate = new Date();
         ///let workItemInfo:workItemInterfaces.IWorkItemStateHistory[] = this.state.workItemHistory;
         data.forEach((thisWI) => {
-            let i:number = 0;
+            
             let historyWithTime:workItemInterfaces.IWorkItemStateHistory = {workItemID:thisWI.id,revisions:[], title:thisWI.title.toString(), htmlLink: thisWI.htmlLink}
 
             let topNdx = thisWI.history.length -1;
 
             
-            for(i=0; i < thisWI.history.length; i++)
+            for(let i=0; i < thisWI.history.length; i++)
             {
                 let thisRev:workItemInterfaces.IWorkItemStateInfo = {workItemID: thisWI.id, workItemTitle:thisWI.title,  revNum:thisWI.history[i].rev,boardColumn:thisWI.history[i].fields["System.BoardColumn"],boardColumnStartTime:thisWI.history[i].fields["System.ChangedDate"],timeInColumn:0}
                 if(i == topNdx)
@@ -908,7 +903,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         
         let boardColumnData:workItemInterfaces.IBoardColumnStat[] = this.state.boardColumnData;
         let categoryInfo:ICategory[] = this.state.categories;
-        let selectedColumn:workItemInterfaces.IBoardColumnStat | undefined = boardColumnData.find(c=> c.boardColumn == boardColumnName)
+        let selectedColumn:workItemInterfaces.IBoardColumnStat | undefined = boardColumnData.find(c=> c.boardColumn == boardColumnName);
         if(selectedColumn != undefined)
         {
             selectedColumn.category = category;
@@ -1022,13 +1017,6 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         //this.setState({isToastVisible:true, isToastFadingOut:false, exception:toastText})
     }
 
-    
-    private onCallToActionClick(event?: React.MouseEvent<HTMLButtonElement>):void
-    {
-        
-        
-        this.setState({isToastFadingOut:true, isToastVisible:false,exception:""})
-    }
 
 
     private getListOfBacklogLevels():Array<IListBoxItem<{}>>
@@ -1072,7 +1060,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     ): JSX.Element => {
         let timeObject:TimeCalc.IDuration = TimeCalc.getMillisecondsToTime(item.average);
         let stdDevObject:TimeCalc.IDuration = TimeCalc.getMillisecondsToTime(item.stdDev);
-        key = item.boardColumn
+        let keyBoardCol = item.boardColumn
         let listClassSet:string = "text-ellipsis"
         let calcOutputClassSet:string ="fontSizeMS font-size-ms text-ellipsis secondary-text ";
         let workButtonClass:string ="";
@@ -1099,7 +1087,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         }
         
         return (
-            <ListItem key={key || "list-item" + index} index={index} details={details}>
+            <ListItem key={keyBoardCol || "list-item" + index} index={index} details={details}>
                 
                 <div className="list-example-row flex-row h-scroll-hidden"> 
                     
@@ -1162,8 +1150,8 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             if(!loadingWorkItems){
             return (
                 <Page className="flex-grow prinfo-hub">
-                    <Card className="selectionCard flex-row" titleProps={{text: "Selections"}} >
-                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"left", minWidth:"325px"}}>
+                    <Card className="selectionCard flex-row" titleProps={{text: "Selections"}} >                        
+                        <div className="flex-cell" style={{ flexWrap: "wrap", textAlign:"left", minWidth:"325px", minHeight:""}}>
                             <FormItem className="teamDropDownFF" label="Team: " message="Select the team you want to examine the board for">
                                 <Dropdown items={teamList} placeholder="Select a Team" ariaLabel="Basic" className="teamDropDown" onSelect={this.selectTeam} /> 
                             </FormItem>
@@ -1314,7 +1302,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
 
                 </Page>
-            )
+            );
             } //loadingWorkitems
             else {
                 return (

@@ -1183,7 +1183,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                 <div className="flex-row" style={{width:"100%"}}>
                                         <div>
                                             <Card className="flex-column flex-grow efficiencyColumnCard" titleProps={{text:"Flow Efficiency %"}}>
-                                                <div className="flex-grow" style={{minWidth:"120px"}}>
+                                                <div className="flex-grow" style={{minWidth:"190px"}}>
                                                 <table>
                                                     <tbody>
                                                     <tr>
@@ -1203,7 +1203,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                                     </tbody>
                                                 </table>
                                                 </div>
-                                                <div  className="flex-grow" style={{minWidth:"370px"}}>
+                                                <div  className="flex-grow" style={{minWidth:"310px"}}>
                                                     <table>
                                                         <tbody>
                                                             <tr>
@@ -1218,7 +1218,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                                     </table>
                                                     
                                                 </div>
-                                                <div  className="flex-grow" style={{minWidth:"370px"}}>
+                                                <div  className="flex-grow" style={{minWidth:"310px"}}>
                                                     <table>
                                                         <tbody>
                                                             <tr>

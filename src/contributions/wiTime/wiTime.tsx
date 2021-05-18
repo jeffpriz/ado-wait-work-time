@@ -1203,7 +1203,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                                     </tbody>
                                                 </table>
                                                 </div>
-                                                <div  className="flex-grow" style={{minWidth:"420px"}}>
+                                                <div  className="flex-grow" style={{minWidth:"390px"}}>
                                                     <table>
                                                         <tbody>
                                                             <tr>
@@ -1218,7 +1218,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                                     </table>
                                                     
                                                 </div>
-                                                <div  className="flex-grow" style={{minWidth:"420px"}}>
+                                                <div  className="flex-grow" style={{minWidth:"390px"}}>
                                                     <table>
                                                         <tbody>
                                                             <tr>

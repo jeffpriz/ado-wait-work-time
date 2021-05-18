@@ -129,6 +129,7 @@ export async function GetWorkItemsByQuery(client:WorkItemTrackingRestClient, pro
                     let cntr:number =0;
                     do{
 
+                        ids = [];
                         for(cntr=0; ndx<workItemReferences.length && cntr <= 200; cntr++)
                         {
                             ids.push(workItemReferences[ndx].id);

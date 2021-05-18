@@ -24,14 +24,14 @@ export async function GetWorkItemDurationSlices(workItemList:WorkItemReference[]
     return new Promise<IDurationSlice[]>(async (resolve,reject) => {
         try 
         {       
-            let wiDetails:WorkItem[] = await GetWorkItems.GetWorkItemDetailsBatch(client, projectName, workItemList);
-            wiDetails = wiDetails.sort(dateSort);
-
-            
-            slices = getClosedWorkItemSlices(wiDetails,14);
-
-            getWorkItemTimesForSlices(slices,projectName);
-            
+            let wiDetails:WorkItem[] = []
+            if(workItemList.length > 0)
+            {
+                wiDetails = await GetWorkItems.GetWorkItemDetailsBatch(client, projectName, workItemList);
+                wiDetails = wiDetails.sort(dateSort);            
+                slices = getClosedWorkItemSlices(wiDetails,14);
+                getWorkItemTimesForSlices(slices,projectName);
+            }
             resolve(slices);
         }
         catch(ex)

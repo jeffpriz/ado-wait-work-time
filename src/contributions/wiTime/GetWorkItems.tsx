@@ -126,11 +126,11 @@ export async function GetWorkItemsByQuery(client:WorkItemTrackingRestClient, pro
             return new Promise<WorkItem[]>(async (resolve,reject) => {
                 try {
                     let ndx:number = 0;
-                    let cntr:number =0;
+                    let cntr:number = 0;
                     do{
 
                         ids = [];
-                        for(cntr=0; ndx<workItemReferences.length && cntr <= 200; cntr++)
+                        for(cntr=0; ndx<workItemReferences.length && cntr < 200; cntr++)
                         {
                             ids.push(workItemReferences[ndx].id);
                             ndx++;
@@ -150,7 +150,8 @@ export async function GetWorkItemsByQuery(client:WorkItemTrackingRestClient, pro
                             workItemResult.push(thisWI);
                         });
                     }
-                    
+                    console.log("requested " + workItemReferences.length.toString() + " Work Item IDs");
+                    console.log("returning " + workItemResult.length.toString() + " work items");
                     //let workItemResult:WorkItem[] = await  client.getWorkItemsBatch(req,project);
                     resolve(workItemResult);
                 }

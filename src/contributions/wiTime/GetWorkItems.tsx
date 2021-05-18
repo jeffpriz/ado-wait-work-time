@@ -120,18 +120,37 @@ export async function GetWorkItemsByQuery(client:WorkItemTrackingRestClient, pro
         {
 
             let fields:string[] = ["System.Id", "System.WorkItemType", "System.State", "System.AreaPath", "Microsoft.vsts.Common.ClosedDate", "System.CreatedDate"];
-            let ids:number[] = [];
+            let ids:number[] = [];            
+            let wiResultPromises:Promise<WorkItem[]>[] = [];
 
             return new Promise<WorkItem[]>(async (resolve,reject) => {
                 try {
-                    workItemReferences.forEach((thisWI) => {
+                    let ndx:number = 0;
+                    let cntr:number =0;
+                    do{
 
-                        ids.push(thisWI.id);
+                        for(cntr=0; ndx<workItemReferences.length && cntr <= 200; cntr++)
+                        {
+                            ids.push(workItemReferences[ndx].id);
+                            ndx++;
+                        }
+                        let req:WorkItemBatchGetRequest = {$expand: WorkItemExpand.Links, asOf:new Date(), fields:fields, ids:ids, errorPolicy:WorkItemErrorPolicy.Omit};
+                        wiResultPromises.push(client.getWorkItemsBatch(req,project));
+                    } while (ndx < workItemReferences.length)
+                    
+                    
+                    //let req:WorkItemBatchGetRequest = {$expand: WorkItemExpand.Links, asOf:new Date(), fields:fields, ids:ids, errorPolicy:WorkItemErrorPolicy.Omit};
 
-                    });
+                    let allWorkItemResult:WorkItem[][] = await Promise.all(wiResultPromises);
+                    let workItemResult:WorkItem[] = [];
+                    for(const thisResult of allWorkItemResult) {
+                        thisResult.forEach((thisWI)=>{
 
-                    let req:WorkItemBatchGetRequest = {$expand: WorkItemExpand.Links, asOf:new Date(), fields:fields, ids:ids, errorPolicy:WorkItemErrorPolicy.Omit};
-                    let workItemResult:WorkItem[] = await client.getWorkItemsBatch(req,project);
+                            workItemResult.push(thisWI);
+                        });
+                    }
+                    
+                    //let workItemResult:WorkItem[] = await  client.getWorkItemsBatch(req,project);
                     resolve(workItemResult);
                 }
                 catch(ex)

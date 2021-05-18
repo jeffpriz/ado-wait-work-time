@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "wiTimeReportTest",
     "publisher": "OneLuckiDev",
-    "version": "0.1.116",
+    "version": "0.1.118",
     "name": "Work Item Flow Efficiency - TEST",
     "description": "This will give you insights in to who is approving the Pull Requests for your repository.",
     "public": false,

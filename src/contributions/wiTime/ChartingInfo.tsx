@@ -113,7 +113,7 @@ export function GetEfficiencyLineChart(data:trendSliceFunctions.IDurationSlice[]
 {
     var d:IBarChartData = {labels:[], datasets:[]};
     var RunningItemsDataset:ILineChartDataset={type:"line", label:"Running Efficiency", backgroundColor:RunningAverageChartColor, borderColor:WorkColumnColor, data:[], fill:false};
-    var ThisSliceItemsDataset:ILineChartDataset={type:"line", label:"Efficiency In Slice", backgroundColor:RunningAverageChartColor, borderColor:WaitColumnColor, data:[], fill:false};
+    var ThisSliceItemsDataset:ILineChartDataset={type:"line", label:"Efficiency In This 2 weeks", backgroundColor:RunningAverageChartColor, borderColor:WaitColumnColor, data:[], fill:false};
 
     let sortedSlices:trendSliceFunctions.IDurationSlice[] = data.sort(trendSliceFunctions.sliceDateSort);
     

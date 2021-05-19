@@ -1193,6 +1193,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                                         </div>
                                                         </td>
                                                     </tr>
+                                                    
                                                     <tr>
                                                         <td>
                                                         <div className="body-s flex-row">
@@ -1238,7 +1239,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                                     </div>
                                     <div className="flex-row" style={{width:"100%"}}>
                                         <div>
-                                            <Card className="flex-column flex-grow chartColumnCard">
+                                            <Card className="flex-column flex-grow chartColumnCard" titleProps={{text:"Wait Work Charts for Selected Time Period"}}>
                                                 <div className="flex-grow">
                                                 <Bar data={timeBarData} options={BarCharOptions} height={250}/>
                                                 </div>

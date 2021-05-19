@@ -96,7 +96,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     constructor(props:{}) {
         super(props);
         
-        let initState:IWorkItemTimeContentState = {projectInfo:{id:"", name:""}, projectName:"",team:"",   doneLoading: false,  teamList:[], teamBoard:undefined, teamBacklogConfig:undefined,  teamFields:{_links:undefined, url:"", values:[],defaultValue:"", field:{referenceName:"", url:""}}, workItemRevTableData:[],loadingWorkItems:false, boardColumnData:[], detailsCollapsed:true, dateOffset:30, categories:this.getInitializedCategoryInfo(), workItemCount:0,workItemProcessDetails:[], teamBacklogLevelsList:[], backlogLevelConfig:undefined, tagExclusions:[], backlogWorkItemTypes:[], workItemClosedSlices:[]};
+        let initState:IWorkItemTimeContentState = {projectInfo:{id:"", name:""}, projectName:"",team:"",   doneLoading: false,  teamList:[], teamBoard:undefined, teamBacklogConfig:undefined,  teamFields:{_links:undefined, url:"", values:[],defaultValue:"", field:{referenceName:"", url:""}}, workItemRevTableData:[],loadingWorkItems:false, boardColumnData:[], detailsCollapsed:true, dateOffset:14, categories:this.getInitializedCategoryInfo(), workItemCount:0,workItemProcessDetails:[], teamBacklogLevelsList:[], backlogLevelConfig:undefined, tagExclusions:[], backlogWorkItemTypes:[], workItemClosedSlices:[]};
         this.dateSelection = new DropdownSelection();
         this.backlogSelection = new DropdownSelection();
         this.dateSelection.select(0);

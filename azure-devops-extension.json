@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "wiTimeReport",
     "publisher": "OneLuckiDev",
-    "version": "1.0.29",
+    "version": "1.0.30",
     "name": "Work Item Flow Efficiency",
     "description": "Get Insight on the time your cards stay in your board columns.",
     "public": true,
@@ -41,6 +41,14 @@
         },
         {
             "path":"images/flowScreen.PNG",
+            "addressable":true
+        },
+        {
+            "path":"images/boardColumns.PNG",
+            "addressable":true
+        },
+        {
+            "path":"images/waitworkAverages.PNG",
             "addressable":true
         }
     ],

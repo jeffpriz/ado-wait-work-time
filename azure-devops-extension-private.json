@@ -42,6 +42,14 @@
         {
             "path":"images/flowScreen.PNG",
             "addressable":true
+        },
+        {
+            "path":"images/boardColumns.PNG",
+            "addressable":true
+        },
+        {
+            "path":"images/waitworkAverages.PNG",
+            "addressable":true
         }
     ],
     "badges": [

@@ -1,162 +1,174 @@
 import * as React from "react";
 import * as SDK from "azure-devops-extension-sdk";
 import { showRootComponent } from "../../Common";
-import { Doughnut, Bar} from 'react-chartjs-2';
+import { Doughnut, Bar } from "react-chartjs-2";
 import { Page } from "azure-devops-ui/Page";
 import { Card } from "azure-devops-ui/Card";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
-import {Dropdown} from "azure-devops-ui/Dropdown";
+import { Dropdown } from "azure-devops-ui/Dropdown";
 import { Spinner, SpinnerSize } from "azure-devops-ui/Spinner";
 import { ScrollableList, IListItemDetails, ListSelection, ListItem } from "azure-devops-ui/List";
 import { DropdownSelection } from "azure-devops-ui/Utilities/DropdownSelection";
 import { Header } from "azure-devops-ui/Header";
-import { CommonServiceIds, IProjectPageService,IGlobalMessagesService, getClient, IProjectInfo } from "azure-devops-extension-api";
-import {WorkRestClient, BacklogConfiguration, TeamFieldValues, Board, BoardColumnType, BacklogLevelConfiguration} from "azure-devops-extension-api/Work";
-import { WorkItemTrackingRestClient,  WorkItem, WorkItemQueryResult, Wiql, WorkItemReference, WorkItemExpand } from "azure-devops-extension-api/WorkItemTracking";
-import {  ProcessWorkItemType, WorkItemTrackingProcessRestClient } from "azure-devops-extension-api/WorkItemTrackingProcess"
-import {CoreRestClient, WebApiTeam, TeamContext } from "azure-devops-extension-api/Core";
-import * as workItemInterfaces from "./WorkItemInfo";
-import { IListBoxItem} from "azure-devops-ui/ListBox";
+import { CommonServiceIds, IProjectPageService, IGlobalMessagesService, getClient, IProjectInfo } from "azure-devops-extension-api";
+import { WorkRestClient, BacklogConfiguration, TeamFieldValues, Board, BoardColumnType, BacklogLevelConfiguration } from "azure-devops-extension-api/Work";
+import { WorkItemTrackingRestClient, WorkItemReference } from "azure-devops-extension-api/WorkItemTracking";
+import { ProcessWorkItemType, WorkItemTrackingProcessRestClient } from "azure-devops-extension-api/WorkItemTrackingProcess";
+import { CoreRestClient, WebApiTeam, TeamContext } from "azure-devops-extension-api/Core";
+import { IListBoxItem } from "azure-devops-ui/ListBox";
 import { Table } from "azure-devops-ui/Table";
-import * as WITableSetup from "./WITableSetup";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
-import * as TimeCalc from "./Time";
 import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
-import * as ADOProcess from "./ADOProjectCalls";
 import { FormItem } from "azure-devops-ui/FormItem";
 import { TextField } from "azure-devops-ui/TextField";
-import {GetWaitWorkBarChartData, IBarChartData, IChartData, GetWaitWorkPieChartData, BarCharOptions, GetWorkWaitTimeItemLineChart, GetEfficiencyLineChart} from "./ChartingInfo";
-import * as GetWorkItems from "./GetWorkItems";
-import * as TrendSlice from "./trendSliceFunctions";
+
+// New imports from refactored modules
+import { IWorkItemTableDisplay, IBoardColumnStat, ColumnCategoryChoices as columnCategoryChoices } from "../../types/workItemTypes";
+import { ICategory, WAIT_CAT_NAME, WORK_CAT_NAME, NOT_SET_NAME } from "../../types/categoryTypes";
+import { IDurationSlice } from "../../types/trendSliceTypes";
+import { workItemColumns } from "../../config/tableConfig";
+import { DATE_SELECTION_CHOICES, COLUMN_CATEGORY_CHOICES, DAY_MILLISECONDS, DEFAULT_DATE_OFFSET, HISTORICAL_TREND_DAYS } from "../../config/constants";
+import { getMillisecondsToTime, formatDuration } from "../../utils/timeUtils";
+import { getStandardDeviation, calculateFlowEfficiency } from "../../utils/statisticsUtils";
+import { splitTagsValue } from "../../utils/arrayUtils";
+import { getWaitWorkBarChartData, IBarChartData, IChartData, getWaitWorkPieChartData, BAR_CHART_OPTIONS, getWorkWaitTimeItemLineChart, getEfficiencyLineChart } from "../../utils/chartUtils";
+import { calculateBoardColumnTime, collectWorkItemRevisionsForTable, gatherDistinctBoardColumns, calculateBoardColumnAverages } from "../../utils/workItemCalculations";
+import { getInitializedCategories, getCategoryByName, getBoardColumnCategory, recalculateCategoryStatistics, setColumnCategory } from "../../utils/categoryUtils";
+import { getProcessWorkItemDetails } from "../../services/adoProjectService";
+import { getWorkItemsByQuery } from "../../services/workItemService";
+import { getWorkItemDurationSlices, updateSliceDurations } from "../../services/workItemHistoryService";
 
 
 
+/**
+ * Component state interface for WorkItemTimeContent
+ */
 interface IWorkItemTimeContentState {
-    projectInfo: IProjectInfo 
-    projectName: string;
-    teamBacklogConfig:BacklogConfiguration|undefined;
-    teamBoard:Board|undefined,
-    teamList: Array<IListBoxItem<{}>>;
-    teamBacklogLevelsList:Array<IListBoxItem<{}>>;
-    teamFields:TeamFieldValues;
-    workItemRevTableData:workItemInterfaces.IWorkItemTableDisplay[],
-    boardColumnData:workItemInterfaces.IBoardColumnStat[],
-    workItemProcessDetails:ProcessWorkItemType[],
-    backlogLevelConfig:BacklogLevelConfiguration|undefined,
-    workItemCount:number,    
-    team: string;
-    dateOffset:number;
-    doneLoading:boolean;
-    loadingWorkItems:boolean;
-    detailsCollapsed:boolean;
-    categories:ICategory[];
-    tagExclusions:string[];
-    backlogWorkItemTypes:string[];
-    workItemClosedSlices:TrendSlice.IDurationSlice[];
+  projectInfo: IProjectInfo;
+  projectName: string;
+  teamBacklogConfig: BacklogConfiguration | undefined;
+  teamBoard: Board | undefined;
+  teamList: Array<IListBoxItem<{}>>;
+  teamBacklogLevelsList: Array<IListBoxItem<{}>>;
+  teamFields: TeamFieldValues;
+  workItemRevTableData: IWorkItemTableDisplay[];
+  boardColumnData: IBoardColumnStat[];
+  workItemProcessDetails: ProcessWorkItemType[];
+  backlogLevelConfig: BacklogLevelConfiguration | undefined;
+  workItemCount: number;
+  team: string;
+  dateOffset: number;
+  doneLoading: boolean;
+  loadingWorkItems: boolean;
+  detailsCollapsed: boolean;
+  categories: ICategory[];
+  tagExclusions: string[];
+  backlogWorkItemTypes: string[];
+  workItemClosedSlices: IDurationSlice[];
 }
 
-
-export interface ICategory
-{
-    categoryName:string,
-    categoryType:workItemInterfaces.columnCategoryChoices,
-    boardColumnNames:string[],
-    stats:workItemInterfaces.IBoardColumnStat
-}
-
-export var  WAIT_CAT_NAME:string = "Wait";
-export var WORK_CAT_NAME:string = "Work";
-export var NOT_SET_NAME:string = "Not Set";
-
-
+/**
+ * Main component for displaying work item time analysis
+ */
 class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState> {
-    private readonly dayMilliseconds:number = ( 24 * 60 * 60 * 1000);
-    //private toastRef: React.RefObject<Toast> = React.createRef<Toast>();
-    private dateSelection:DropdownSelection;
-    private backlogSelection:DropdownSelection;
-    private dateSelectionChoices = [        
-        { text: "Last 14 Days", id: "14" },
-        { text: "Last 30 Days", id: "30" },
-        { text: "Last 60 Days", id: "60" },
-        { text: "Last 90 Days", id: "90" },
-        { text: "Last 120 Days", id: "120" },
-        { text: "Last 365 Days", id: "365" },        
+  private readonly dayMilliseconds: number = DAY_MILLISECONDS;
+  private dateSelection: DropdownSelection;
+  private backlogSelection: DropdownSelection;
+  private dateSelectionChoices = DATE_SELECTION_CHOICES;
+  private tagListObservable: ObservableValue<string>;
+  private columnCategoryChoices = COLUMN_CATEGORY_CHOICES;
 
-    ];
+  constructor(props: {}) {
+    super(props);
+
+    const initState: IWorkItemTimeContentState = {
+      projectInfo: { id: "", name: "" },
+      projectName: "",
+      team: "",
+      doneLoading: false,
+      teamList: [],
+      teamBoard: undefined,
+      teamBacklogConfig: undefined,
+      teamFields: {
+        _links: undefined,
+        url: "",
+        values: [],
+        defaultValue: "",
+        field: { referenceName: "", url: "" },
+      },
+      workItemRevTableData: [],
+      loadingWorkItems: false,
+      boardColumnData: [],
+      detailsCollapsed: true,
+      dateOffset: DEFAULT_DATE_OFFSET,
+      categories: getInitializedCategories(),
+      workItemCount: 0,
+      workItemProcessDetails: [],
+      teamBacklogLevelsList: [],
+      backlogLevelConfig: undefined,
+      tagExclusions: [],
+      backlogWorkItemTypes: [],
+      workItemClosedSlices: [],
+    };
+
+    this.dateSelection = new DropdownSelection();
+    this.backlogSelection = new DropdownSelection();
+    this.dateSelection.select(0);
+    this.tagListObservable = new ObservableValue<string>("");
+
+    this.state = initState;
+  }
 
 
-    private tagListObservable: ObservableValue<string>;
-    
+  /**
+   * Component lifecycle: Initialize SDK and load project data
+   */
+  public async componentDidMount(): Promise<void> {
+    await SDK.init();
+    await SDK.ready();
+    SDK.getConfiguration();
+    SDK.getExtensionContext();
 
-    private columnCategoryChoices = [
-        {text:WORK_CAT_NAME, id:WORK_CAT_NAME},
-        {text:WAIT_CAT_NAME, id:WAIT_CAT_NAME}
-    ]
-    constructor(props:{}) {
-        super(props);
-        
-        let initState:IWorkItemTimeContentState = {projectInfo:{id:"", name:""}, projectName:"",team:"",   doneLoading: false,  teamList:[], teamBoard:undefined, teamBacklogConfig:undefined,  teamFields:{_links:undefined, url:"", values:[],defaultValue:"", field:{referenceName:"", url:""}}, workItemRevTableData:[],loadingWorkItems:false, boardColumnData:[], detailsCollapsed:true, dateOffset:14, categories:this.getInitializedCategoryInfo(), workItemCount:0,workItemProcessDetails:[], teamBacklogLevelsList:[], backlogLevelConfig:undefined, tagExclusions:[], backlogWorkItemTypes:[], workItemClosedSlices:[]};
-        this.dateSelection = new DropdownSelection();
-        this.backlogSelection = new DropdownSelection();
-        this.dateSelection.select(0);
-        this.tagListObservable = new ObservableValue<string>("");
-        
-        this.state = initState;
+    const projectService = await SDK.getService<IProjectPageService>(
+      CommonServiceIds.ProjectPageService
+    );
+    const project = await projectService.getProject();
 
+    if (project) {
+      this.setState({ projectInfo: project });
+      this.initializeState();
+    } else {
+      this.toastError("Did not retrieve the project info");
     }
+  }
 
-    private getInitializedCategoryInfo():ICategory[]
-    {
-        
-        let waitCat:ICategory = {categoryName:WAIT_CAT_NAME, boardColumnNames:[], categoryType:workItemInterfaces.columnCategoryChoices.Wait, stats:{boardColumn:"",average:0, stdDev:0, total:0, workItemTimes:[],category:workItemInterfaces.columnCategoryChoices.Wait}};
-        let workCat:ICategory = {categoryName:WORK_CAT_NAME, boardColumnNames:[], categoryType:workItemInterfaces.columnCategoryChoices.Work, stats:{boardColumn:"",average:0, stdDev:0, total:0, workItemTimes:[],category:workItemInterfaces.columnCategoryChoices.Work}};
-        let notSetCat:ICategory = {categoryName:NOT_SET_NAME, boardColumnNames:[], categoryType:workItemInterfaces.columnCategoryChoices.NotSet, stats:{boardColumn:"",average:0, stdDev:0, total:0, workItemTimes:[],category:workItemInterfaces.columnCategoryChoices.NotSet}};
-        return [notSetCat, waitCat,workCat]
+  /**
+   * Initialize component state with project process details and team list
+   */
+  private async initializeState(): Promise<void> {
+    await SDK.ready();
+    try {
+      const project = this.state.projectInfo;
+      if (project) {
+        const coreClient = getClient(CoreRestClient);
+        const wiProcessClient = getClient(WorkItemTrackingProcessRestClient);
+        const wiTypeDetails = await getProcessWorkItemDetails(
+          coreClient,
+          wiProcessClient,
+          project.id
+        );
+        this.setState({
+          projectName: project.name,
+          doneLoading: true,
+          workItemProcessDetails: wiTypeDetails,
+        });
+      }
+      this.getTeamsList();
+    } catch (ex) {
+      this.toastError(ex.toString());
     }
-
-
-    //After the Component has successfully loaded and is ready for processing, begin the initialization
-    public async componentDidMount() {        
-        await SDK.init();
-        await SDK.ready();
-        SDK.getConfiguration()
-        SDK.getExtensionContext()
-        const projectService = await SDK.getService<IProjectPageService>(CommonServiceIds.ProjectPageService);
-        const project = await projectService.getProject();
-        if(project){
-    
-        this.setState({projectInfo:project});
-        this.initializeState();
-        }
-        else{
-            this.toastError("Did not retrieve the project info");
-        }
-    }
-
-
-    //Init State -- set the SDK Ready, gets the current teams Team Project Process information, and handles getting initial items like the team list
-    private async initializeState():Promise<void> {
-
-        await SDK.ready();
-        try {
-            
-            const project: IProjectInfo | undefined = this.state.projectInfo;
-            if (project) {
-                
-                let coreClient:CoreRestClient = getClient(CoreRestClient);
-                let wiProcessClient:WorkItemTrackingProcessRestClient = getClient(WorkItemTrackingProcessRestClient);
-                let wiTypeDetails:ProcessWorkItemType[] = await ADOProcess.GetProcessWorkItemDetails(coreClient,wiProcessClient,project.id);
-                this.setState({ projectName: project.name, doneLoading:true, workItemProcessDetails:wiTypeDetails});
-            }
-            this.getTeamsList();
-            //this.getWorkItemReporting()
-        }
-        catch(ex)
-        {
-            this.toastError(ex.toString());
-        }
-    }
+  }
 
 
     ///getTeamsList -- gets the teams that are a part of the teamProject.

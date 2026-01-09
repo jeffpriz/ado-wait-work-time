@@ -290,93 +290,81 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     }
 
 
-    //Builds the WIQ to query the Work Items based on the filters the user has selected
-    private async GetWorkItemsByQuery(workItemTypes:string[], dateOffset:number, tagList:string[]):Promise<WorkItemReference[]>
-    {
+  /**
+   * Queries work items based on filters
+   */
+  private async getWorkItemsByQueryInternal(
+    workItemTypes: string[],
+    dateOffset: number,
+    tagList: string[]
+  ): Promise<WorkItemReference[]> {
+    try {
+      const client = getClient(WorkItemTrackingRestClient);
+      const wiResults = await getWorkItemsByQuery(
+        client,
+        this.state.projectName,
+        this.state.team,
+        this.state.teamFields,
+        workItemTypes,
+        this.state.workItemProcessDetails,
+        dateOffset,
+        tagList
+      );
+      this.setState({ workItemCount: wiResults.length });
+      return wiResults;
+    } catch (ex) {
+      this.toastError(ex);
+      throw ex;
+    }
+  }
 
-        
-        return new Promise<WorkItemReference[]>(async (resolve,reject) => {
+  /**
+   * Handles team selection event
+   */
+  private async doTeamSelect(teamId: string): Promise<void> {
+    this.setState({ loadingWorkItems: true, categories: getInitializedCategories() });
+    let teamBacklogLevels: Array<IListBoxItem<{}>> = [];
+    let backlogWorkItemTypes: string[] = [];
 
-            try
-            {
+    try {
+      const teamInfoProm = this.getTeam(teamId);
+      await this.getTeamConfig(teamId);
 
-                let project:string = this.state.projectName;
-                let team:string = this.state.team;
-                let teamAreaPaths:TeamFieldValues = this.state.teamFields;
-                let workItemProcessDetails:ProcessWorkItemType[] = this.state.workItemProcessDetails;
-                const client = getClient(WorkItemTrackingRestClient);
-                let wiResults:WorkItemReference[] = await  GetWorkItems.GetWorkItemsByQuery(client, project,team,teamAreaPaths, workItemTypes, workItemProcessDetails, dateOffset,tagList);
-                this.setState({workItemCount:wiResults.length});
-                resolve(wiResults);
-            }
-            catch(ex) 
-            {
-                this.toastError(ex);
-                reject(ex);                
-            }
+      const backlogConfig = this.state.teamBacklogConfig;
+      if (backlogConfig) {
+        const c = backlogConfig.requirementBacklog;
+        backlogWorkItemTypes = this.getWorkItemTypesForBacklog(c);
+      }
 
+      await teamInfoProm;
+      const dateOffset = this.state.dateOffset;
+      await this.doGetData(backlogWorkItemTypes, dateOffset, this.state.tagExclusions);
+      teamBacklogLevels = this.getListOfBacklogLevels();
+      this.backlogSelection.select(0);
+
+      const boardColumnData = this.state.boardColumnData;
+      const notsetCat = getCategoryByName(this.state.categories, NOT_SET_NAME);
+
+      if (boardColumnData && notsetCat) {
+        boardColumnData.forEach((bc) => {
+          notsetCat.boardColumnNames.push(bc.boardColumn);
         });
+      }
+    } finally {
+      let backlogLevelConfig: BacklogLevelConfiguration | undefined;
+      if (this.state.teamBacklogConfig) {
+        backlogLevelConfig = this.state.teamBacklogConfig.requirementBacklog;
+      }
+      this.setState({
+        loadingWorkItems: false,
+        team: teamId,
+        teamBacklogLevelsList: teamBacklogLevels,
+        backlogLevelConfig,
+        backlogWorkItemTypes,
+      });
+      this.doGetTrendData();
     }
-
-
-
-    private SplitTagsValue(tagString:string):string[]
-    {
-        let tagList:string[] = [];
-        if(tagString.trim().length > 0)
-        {
-            tagList = tagString.split(',');
-            tagList.forEach((thisTag)=>{ thisTag = thisTag.trim(); });
-        }
-        return tagList;
-    }
-
-    //Activities to take after the user has selected a Team from the drop down.  
-    private async DoTeamSelect(teamId:string)
-    {
-
-        this.setState({loadingWorkItems:true,categories:this.getInitializedCategoryInfo()});
-        let teamBacklogLevels:Array<IListBoxItem<{}>> = [];
-        let backlogWorkItemTypes:string[] = [];
-        try {
-            
-            
-            let teamInfoProm:Promise<WebApiTeam> = this.GetTeam(teamId);
-            await this.GetTeamConfig(teamId);
-            let backlogConfig:BacklogConfiguration|undefined = this.state.teamBacklogConfig;
-            
-            if(backlogConfig)
-            {
-                let c:BacklogLevelConfiguration = backlogConfig.requirementBacklog;
-                backlogWorkItemTypes = this.GetWorkItemTypesForBacklog(c);
-            }
-
-            await teamInfoProm;
-            let dateOffset = this.state.dateOffset;
-            await this.DoGetData(backlogWorkItemTypes,dateOffset, this.state.tagExclusions);
-            teamBacklogLevels = this.getListOfBacklogLevels();
-            this.backlogSelection.select(0);
-            let boardColumnData:workItemInterfaces.IBoardColumnStat[] = this.state.boardColumnData;
-            let notsetcat = this.GetWorkItemCategory(NOT_SET_NAME);
-            
-            if(boardColumnData && notsetcat)            
-            {
-                boardColumnData.forEach((bc)=> {
-                    notsetcat.boardColumnNames.push(bc.boardColumn);
-                });
-            }
-        }
-        finally
-        {
-            let backlogLevelConfig:BacklogLevelConfiguration|undefined = undefined;
-            if(this.state.teamBacklogConfig)
-            {
-                backlogLevelConfig = this.state.teamBacklogConfig.requirementBacklog;
-            }
-            this.setState({loadingWorkItems:false, team:teamId, teamBacklogLevelsList:teamBacklogLevels, backlogLevelConfig: backlogLevelConfig, backlogWorkItemTypes:backlogWorkItemTypes});
-            this.DoGetTrendData();
-        }
-    }
+  }
 
 
     //Activities to take on when the user has selected a backlog level from the drop down filter
@@ -866,27 +854,19 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
     }
     
-    //Day drop down select
-    private SelectDays = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) => {
+  // Event handlers for dropdown selections
+  private selectDays = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>): void => {
+    const days = Number.parseInt(item.id);
+    this.doDateSelect(days);
+  };
 
-        let d:number = Number.parseInt(item.id);
+  private selectTeam = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>): void => {
+    this.doTeamSelect(item.id);
+  };
 
-        this.DoDateSelect(d);
-    };
-
-
-    ///Team drop down Selection
-    private  selectTeam = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) =>{
-
-
-        this.DoTeamSelect(item.id);
-
-    }
-
-    // Backlog drop down select
-    private selectBacklog = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) =>{
-        this.DoBacklogSelect(item.id);
-    }
+  private selectBacklog = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>): void => {
+    this.doBacklogSelect(item.id);
+  };
 
 
     //

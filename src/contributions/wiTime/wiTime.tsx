@@ -1,162 +1,174 @@
 import * as React from "react";
 import * as SDK from "azure-devops-extension-sdk";
 import { showRootComponent } from "../../Common";
-import { Doughnut, Bar} from 'react-chartjs-2';
+import { Doughnut, Bar } from "react-chartjs-2";
 import { Page } from "azure-devops-ui/Page";
 import { Card } from "azure-devops-ui/Card";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
-import {Dropdown} from "azure-devops-ui/Dropdown";
+import { Dropdown } from "azure-devops-ui/Dropdown";
 import { Spinner, SpinnerSize } from "azure-devops-ui/Spinner";
 import { ScrollableList, IListItemDetails, ListSelection, ListItem } from "azure-devops-ui/List";
 import { DropdownSelection } from "azure-devops-ui/Utilities/DropdownSelection";
 import { Header } from "azure-devops-ui/Header";
-import { CommonServiceIds, IProjectPageService,IGlobalMessagesService, getClient, IProjectInfo } from "azure-devops-extension-api";
-import {WorkRestClient, BacklogConfiguration, TeamFieldValues, Board, BoardColumnType, BacklogLevelConfiguration} from "azure-devops-extension-api/Work";
-import { WorkItemTrackingRestClient,  WorkItem, WorkItemQueryResult, Wiql, WorkItemReference, WorkItemExpand } from "azure-devops-extension-api/WorkItemTracking";
-import {  ProcessWorkItemType, WorkItemTrackingProcessRestClient } from "azure-devops-extension-api/WorkItemTrackingProcess"
-import {CoreRestClient, WebApiTeam, TeamContext } from "azure-devops-extension-api/Core";
-import * as workItemInterfaces from "./WorkItemInfo";
-import { IListBoxItem} from "azure-devops-ui/ListBox";
+import { CommonServiceIds, IProjectPageService, IGlobalMessagesService, getClient, IProjectInfo } from "azure-devops-extension-api";
+import { WorkRestClient, BacklogConfiguration, TeamFieldValues, Board, BoardColumnType, BacklogLevelConfiguration } from "azure-devops-extension-api/Work";
+import { WorkItemTrackingRestClient, WorkItemReference } from "azure-devops-extension-api/WorkItemTracking";
+import { ProcessWorkItemType, WorkItemTrackingProcessRestClient } from "azure-devops-extension-api/WorkItemTrackingProcess";
+import { CoreRestClient, WebApiTeam, TeamContext } from "azure-devops-extension-api/Core";
+import { IListBoxItem } from "azure-devops-ui/ListBox";
 import { Table } from "azure-devops-ui/Table";
-import * as WITableSetup from "./WITableSetup";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
-import * as TimeCalc from "./Time";
 import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
-import * as ADOProcess from "./ADOProjectCalls";
 import { FormItem } from "azure-devops-ui/FormItem";
 import { TextField } from "azure-devops-ui/TextField";
-import {GetWaitWorkBarChartData, IBarChartData, IChartData, GetWaitWorkPieChartData, BarCharOptions, GetWorkWaitTimeItemLineChart, GetEfficiencyLineChart} from "./ChartingInfo";
-import * as GetWorkItems from "./GetWorkItems";
-import * as TrendSlice from "./trendSliceFunctions";
+
+// New imports from refactored modules
+import { IWorkItemTableDisplay, IBoardColumnStat, ColumnCategoryChoices as columnCategoryChoices } from "../../types/workItemTypes";
+import { ICategory, WAIT_CAT_NAME, WORK_CAT_NAME, NOT_SET_NAME } from "../../types/categoryTypes";
+import { IDurationSlice } from "../../types/trendSliceTypes";
+import { workItemColumns } from "../../config/tableConfig";
+import { DATE_SELECTION_CHOICES, COLUMN_CATEGORY_CHOICES, DAY_MILLISECONDS, DEFAULT_DATE_OFFSET, HISTORICAL_TREND_DAYS } from "../../config/constants";
+import { getMillisecondsToTime, formatDuration } from "../../utils/timeUtils";
+import { getStandardDeviation, calculateFlowEfficiency } from "../../utils/statisticsUtils";
+import { splitTagsValue } from "../../utils/arrayUtils";
+import { getWaitWorkBarChartData, IBarChartData, IChartData, getWaitWorkPieChartData, BAR_CHART_OPTIONS, getWorkWaitTimeItemLineChart, getEfficiencyLineChart } from "../../utils/chartUtils";
+import { calculateBoardColumnTime, collectWorkItemRevisionsForTable, gatherDistinctBoardColumns, calculateBoardColumnAverages } from "../../utils/workItemCalculations";
+import { getInitializedCategories, getCategoryByName, getBoardColumnCategory, recalculateCategoryStatistics, setColumnCategory } from "../../utils/categoryUtils";
+import { getProcessWorkItemDetails } from "../../services/adoProjectService";
+import { getWorkItemsByQuery } from "../../services/workItemService";
+import { getWorkItemDurationSlices, updateSliceDurations } from "../../services/workItemHistoryService";
 
 
 
+/**
+ * Component state interface for WorkItemTimeContent
+ */
 interface IWorkItemTimeContentState {
-    projectInfo: IProjectInfo 
-    projectName: string;
-    teamBacklogConfig:BacklogConfiguration|undefined;
-    teamBoard:Board|undefined,
-    teamList: Array<IListBoxItem<{}>>;
-    teamBacklogLevelsList:Array<IListBoxItem<{}>>;
-    teamFields:TeamFieldValues;
-    workItemRevTableData:workItemInterfaces.IWorkItemTableDisplay[],
-    boardColumnData:workItemInterfaces.IBoardColumnStat[],
-    workItemProcessDetails:ProcessWorkItemType[],
-    backlogLevelConfig:BacklogLevelConfiguration|undefined,
-    workItemCount:number,    
-    team: string;
-    dateOffset:number;
-    doneLoading:boolean;
-    loadingWorkItems:boolean;
-    detailsCollapsed:boolean;
-    categories:ICategory[];
-    tagExclusions:string[];
-    backlogWorkItemTypes:string[];
-    workItemClosedSlices:TrendSlice.IDurationSlice[];
+  projectInfo: IProjectInfo;
+  projectName: string;
+  teamBacklogConfig: BacklogConfiguration | undefined;
+  teamBoard: Board | undefined;
+  teamList: Array<IListBoxItem<{}>>;
+  teamBacklogLevelsList: Array<IListBoxItem<{}>>;
+  teamFields: TeamFieldValues;
+  workItemRevTableData: IWorkItemTableDisplay[];
+  boardColumnData: IBoardColumnStat[];
+  workItemProcessDetails: ProcessWorkItemType[];
+  backlogLevelConfig: BacklogLevelConfiguration | undefined;
+  workItemCount: number;
+  team: string;
+  dateOffset: number;
+  doneLoading: boolean;
+  loadingWorkItems: boolean;
+  detailsCollapsed: boolean;
+  categories: ICategory[];
+  tagExclusions: string[];
+  backlogWorkItemTypes: string[];
+  workItemClosedSlices: IDurationSlice[];
 }
 
-
-export interface ICategory
-{
-    categoryName:string,
-    categoryType:workItemInterfaces.columnCategoryChoices,
-    boardColumnNames:string[],
-    stats:workItemInterfaces.IBoardColumnStat
-}
-
-export var  WAIT_CAT_NAME:string = "Wait";
-export var WORK_CAT_NAME:string = "Work";
-export var NOT_SET_NAME:string = "Not Set";
-
-
+/**
+ * Main component for displaying work item time analysis
+ */
 class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState> {
-    private readonly dayMilliseconds:number = ( 24 * 60 * 60 * 1000);
-    //private toastRef: React.RefObject<Toast> = React.createRef<Toast>();
-    private dateSelection:DropdownSelection;
-    private backlogSelection:DropdownSelection;
-    private dateSelectionChoices = [        
-        { text: "Last 14 Days", id: "14" },
-        { text: "Last 30 Days", id: "30" },
-        { text: "Last 60 Days", id: "60" },
-        { text: "Last 90 Days", id: "90" },
-        { text: "Last 120 Days", id: "120" },
-        { text: "Last 365 Days", id: "365" },        
+  private readonly dayMilliseconds: number = DAY_MILLISECONDS;
+  private dateSelection: DropdownSelection;
+  private backlogSelection: DropdownSelection;
+  private dateSelectionChoices = DATE_SELECTION_CHOICES;
+  private tagListObservable: ObservableValue<string>;
+  private columnCategoryChoices = COLUMN_CATEGORY_CHOICES;
 
-    ];
+  constructor(props: {}) {
+    super(props);
+
+    const initState: IWorkItemTimeContentState = {
+      projectInfo: { id: "", name: "" },
+      projectName: "",
+      team: "",
+      doneLoading: false,
+      teamList: [],
+      teamBoard: undefined,
+      teamBacklogConfig: undefined,
+      teamFields: {
+        _links: undefined,
+        url: "",
+        values: [],
+        defaultValue: "",
+        field: { referenceName: "", url: "" },
+      },
+      workItemRevTableData: [],
+      loadingWorkItems: false,
+      boardColumnData: [],
+      detailsCollapsed: true,
+      dateOffset: DEFAULT_DATE_OFFSET,
+      categories: getInitializedCategories(),
+      workItemCount: 0,
+      workItemProcessDetails: [],
+      teamBacklogLevelsList: [],
+      backlogLevelConfig: undefined,
+      tagExclusions: [],
+      backlogWorkItemTypes: [],
+      workItemClosedSlices: [],
+    };
+
+    this.dateSelection = new DropdownSelection();
+    this.backlogSelection = new DropdownSelection();
+    this.dateSelection.select(0);
+    this.tagListObservable = new ObservableValue<string>("");
+
+    this.state = initState;
+  }
 
 
-    private tagListObservable: ObservableValue<string>;
-    
+  /**
+   * Component lifecycle: Initialize SDK and load project data
+   */
+  public async componentDidMount(): Promise<void> {
+    await SDK.init();
+    await SDK.ready();
+    SDK.getConfiguration();
+    SDK.getExtensionContext();
 
-    private columnCategoryChoices = [
-        {text:WORK_CAT_NAME, id:WORK_CAT_NAME},
-        {text:WAIT_CAT_NAME, id:WAIT_CAT_NAME}
-    ]
-    constructor(props:{}) {
-        super(props);
-        
-        let initState:IWorkItemTimeContentState = {projectInfo:{id:"", name:""}, projectName:"",team:"",   doneLoading: false,  teamList:[], teamBoard:undefined, teamBacklogConfig:undefined,  teamFields:{_links:undefined, url:"", values:[],defaultValue:"", field:{referenceName:"", url:""}}, workItemRevTableData:[],loadingWorkItems:false, boardColumnData:[], detailsCollapsed:true, dateOffset:14, categories:this.getInitializedCategoryInfo(), workItemCount:0,workItemProcessDetails:[], teamBacklogLevelsList:[], backlogLevelConfig:undefined, tagExclusions:[], backlogWorkItemTypes:[], workItemClosedSlices:[]};
-        this.dateSelection = new DropdownSelection();
-        this.backlogSelection = new DropdownSelection();
-        this.dateSelection.select(0);
-        this.tagListObservable = new ObservableValue<string>("");
-        
-        this.state = initState;
+    const projectService = await SDK.getService<IProjectPageService>(
+      CommonServiceIds.ProjectPageService
+    );
+    const project = await projectService.getProject();
 
+    if (project) {
+      this.setState({ projectInfo: project });
+      this.initializeState();
+    } else {
+      this.toastError("Did not retrieve the project info");
     }
+  }
 
-    private getInitializedCategoryInfo():ICategory[]
-    {
-        
-        let waitCat:ICategory = {categoryName:WAIT_CAT_NAME, boardColumnNames:[], categoryType:workItemInterfaces.columnCategoryChoices.Wait, stats:{boardColumn:"",average:0, stdDev:0, total:0, workItemTimes:[],category:workItemInterfaces.columnCategoryChoices.Wait}};
-        let workCat:ICategory = {categoryName:WORK_CAT_NAME, boardColumnNames:[], categoryType:workItemInterfaces.columnCategoryChoices.Work, stats:{boardColumn:"",average:0, stdDev:0, total:0, workItemTimes:[],category:workItemInterfaces.columnCategoryChoices.Work}};
-        let notSetCat:ICategory = {categoryName:NOT_SET_NAME, boardColumnNames:[], categoryType:workItemInterfaces.columnCategoryChoices.NotSet, stats:{boardColumn:"",average:0, stdDev:0, total:0, workItemTimes:[],category:workItemInterfaces.columnCategoryChoices.NotSet}};
-        return [notSetCat, waitCat,workCat]
+  /**
+   * Initialize component state with project process details and team list
+   */
+  private async initializeState(): Promise<void> {
+    await SDK.ready();
+    try {
+      const project = this.state.projectInfo;
+      if (project) {
+        const coreClient = getClient(CoreRestClient);
+        const wiProcessClient = getClient(WorkItemTrackingProcessRestClient);
+        const wiTypeDetails = await getProcessWorkItemDetails(
+          coreClient,
+          wiProcessClient,
+          project.id
+        );
+        this.setState({
+          projectName: project.name,
+          doneLoading: true,
+          workItemProcessDetails: wiTypeDetails,
+        });
+      }
+      this.getTeamsList();
+    } catch (ex) {
+      this.toastError(ex.toString());
     }
-
-
-    //After the Component has successfully loaded and is ready for processing, begin the initialization
-    public async componentDidMount() {        
-        await SDK.init();
-        await SDK.ready();
-        SDK.getConfiguration()
-        SDK.getExtensionContext()
-        const projectService = await SDK.getService<IProjectPageService>(CommonServiceIds.ProjectPageService);
-        const project = await projectService.getProject();
-        if(project){
-    
-        this.setState({projectInfo:project});
-        this.initializeState();
-        }
-        else{
-            this.toastError("Did not retrieve the project info");
-        }
-    }
-
-
-    //Init State -- set the SDK Ready, gets the current teams Team Project Process information, and handles getting initial items like the team list
-    private async initializeState():Promise<void> {
-
-        await SDK.ready();
-        try {
-            
-            const project: IProjectInfo | undefined = this.state.projectInfo;
-            if (project) {
-                
-                let coreClient:CoreRestClient = getClient(CoreRestClient);
-                let wiProcessClient:WorkItemTrackingProcessRestClient = getClient(WorkItemTrackingProcessRestClient);
-                let wiTypeDetails:ProcessWorkItemType[] = await ADOProcess.GetProcessWorkItemDetails(coreClient,wiProcessClient,project.id);
-                this.setState({ projectName: project.name, doneLoading:true, workItemProcessDetails:wiTypeDetails});
-            }
-            this.getTeamsList();
-            //this.getWorkItemReporting()
-        }
-        catch(ex)
-        {
-            this.toastError(ex.toString());
-        }
-    }
+  }
 
 
     ///getTeamsList -- gets the teams that are a part of the teamProject.
@@ -185,8 +197,8 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     }
 
 
-    ///GetTeamConfig -- gets team configuration for Backlog and area
-    private async GetTeamConfig(teamID:string)
+    ///getTeamConfig -- gets team configuration for Backlog and area
+    private async getTeamConfig(teamID:string)
     {
 
         try 
@@ -215,7 +227,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
 
     //Get the Team information record from ADO
-    private async GetTeam(teamID:string):Promise<WebApiTeam>
+    private async getTeam(teamID:string):Promise<WebApiTeam>
     {
         return new Promise<WebApiTeam>(async (resolve, reject) => { 
             try 
@@ -253,7 +265,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
 
     //Looks at the team board information we have gathered and determins the Outgoing columns, so that we know what column(s) later we may not want to deal with (i.e. things stay in the Closed column forever)
-    private GetOutgoingBoardColumns():string[]
+    private getOutgoingBoardColumns():string[]
     {
         let result:string[]=[];
 
@@ -278,97 +290,85 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     }
 
 
-    //Builds the WIQ to query the Work Items based on the filters the user has selected
-    private async GetWorkItemsByQuery(workItemTypes:string[], dateOffset:number, tagList:string[]):Promise<WorkItemReference[]>
-    {
+  /**
+   * Queries work items based on filters
+   */
+  private async getWorkItemsByQueryInternal(
+    workItemTypes: string[],
+    dateOffset: number,
+    tagList: string[]
+  ): Promise<WorkItemReference[]> {
+    try {
+      const client = getClient(WorkItemTrackingRestClient);
+      const wiResults = await getWorkItemsByQuery(
+        client,
+        this.state.projectName,
+        this.state.team,
+        this.state.teamFields,
+        workItemTypes,
+        this.state.workItemProcessDetails,
+        dateOffset,
+        tagList
+      );
+      this.setState({ workItemCount: wiResults.length });
+      return wiResults;
+    } catch (ex) {
+      this.toastError(ex);
+      throw ex;
+    }
+  }
 
-        
-        return new Promise<WorkItemReference[]>(async (resolve,reject) => {
+  /**
+   * Handles team selection event
+   */
+  private async doTeamSelect(teamId: string): Promise<void> {
+    this.setState({ loadingWorkItems: true, categories: getInitializedCategories() });
+    let teamBacklogLevels: Array<IListBoxItem<{}>> = [];
+    let backlogWorkItemTypes: string[] = [];
 
-            try
-            {
+    try {
+      const teamInfoProm = this.getTeam(teamId);
+      await this.getTeamConfig(teamId);
 
-                let project:string = this.state.projectName;
-                let team:string = this.state.team;
-                let teamAreaPaths:TeamFieldValues = this.state.teamFields;
-                let workItemProcessDetails:ProcessWorkItemType[] = this.state.workItemProcessDetails;
-                const client = getClient(WorkItemTrackingRestClient);
-                let wiResults:WorkItemReference[] = await  GetWorkItems.GetWorkItemsByQuery(client, project,team,teamAreaPaths, workItemTypes, workItemProcessDetails, dateOffset,tagList);
-                this.setState({workItemCount:wiResults.length});
-                resolve(wiResults);
-            }
-            catch(ex) 
-            {
-                this.toastError(ex);
-                reject(ex);                
-            }
+      const backlogConfig = this.state.teamBacklogConfig;
+      if (backlogConfig) {
+        const c = backlogConfig.requirementBacklog;
+        backlogWorkItemTypes = this.getWorkItemTypesForBacklog(c);
+      }
 
+      await teamInfoProm;
+      const dateOffset = this.state.dateOffset;
+      await this.doGetData(backlogWorkItemTypes, dateOffset, this.state.tagExclusions);
+      teamBacklogLevels = this.getListOfBacklogLevels();
+      this.backlogSelection.select(0);
+
+      const boardColumnData = this.state.boardColumnData;
+      const notsetCat = getCategoryByName(this.state.categories, NOT_SET_NAME);
+
+      if (boardColumnData && notsetCat) {
+        boardColumnData.forEach((bc) => {
+          notsetCat.boardColumnNames.push(bc.boardColumn);
         });
+      }
+    } finally {
+      let backlogLevelConfig: BacklogLevelConfiguration | undefined;
+      if (this.state.teamBacklogConfig) {
+        backlogLevelConfig = this.state.teamBacklogConfig.requirementBacklog;
+      }
+      this.setState({
+        loadingWorkItems: false,
+        team: teamId,
+        teamBacklogLevelsList: teamBacklogLevels,
+        backlogLevelConfig,
+        backlogWorkItemTypes,
+      });
+      this.doGetTrendData();
     }
-
-
-
-    private SplitTagsValue(tagString:string):string[]
-    {
-        let tagList:string[] = [];
-        if(tagString.trim().length > 0)
-        {
-            tagList = tagString.split(',');
-            tagList.forEach((thisTag)=>{ thisTag = thisTag.trim(); });
-        }
-        return tagList;
-    }
-
-    //Activities to take after the user has selected a Team from the drop down.  
-    private async DoTeamSelect(teamId:string)
-    {
-
-        this.setState({loadingWorkItems:true,categories:this.getInitializedCategoryInfo()});
-        let teamBacklogLevels:Array<IListBoxItem<{}>> = [];
-        let backlogWorkItemTypes:string[] = [];
-        try {
-            
-            
-            let teamInfoProm:Promise<WebApiTeam> = this.GetTeam(teamId);
-            await this.GetTeamConfig(teamId);
-            let backlogConfig:BacklogConfiguration|undefined = this.state.teamBacklogConfig;
-            
-            if(backlogConfig)
-            {
-                let c:BacklogLevelConfiguration = backlogConfig.requirementBacklog;
-                backlogWorkItemTypes = this.GetWorkItemTypesForBacklog(c);
-            }
-
-            await teamInfoProm;
-            let dateOffset = this.state.dateOffset;
-            await this.DoGetData(backlogWorkItemTypes,dateOffset, this.state.tagExclusions);
-            teamBacklogLevels = this.getListOfBacklogLevels();
-            this.backlogSelection.select(0);
-            let boardColumnData:workItemInterfaces.IBoardColumnStat[] = this.state.boardColumnData;
-            let notsetcat = this.GetWorkItemCategory(NOT_SET_NAME);
-            
-            if(boardColumnData && notsetcat)            
-            {
-                boardColumnData.forEach((bc)=> {
-                    notsetcat.boardColumnNames.push(bc.boardColumn);
-                });
-            }
-        }
-        finally
-        {
-            let backlogLevelConfig:BacklogLevelConfiguration|undefined = undefined;
-            if(this.state.teamBacklogConfig)
-            {
-                backlogLevelConfig = this.state.teamBacklogConfig.requirementBacklog;
-            }
-            this.setState({loadingWorkItems:false, team:teamId, teamBacklogLevelsList:teamBacklogLevels, backlogLevelConfig: backlogLevelConfig, backlogWorkItemTypes:backlogWorkItemTypes});
-            this.DoGetTrendData();
-        }
-    }
+  }
 
 
     //Activities to take on when the user has selected a backlog level from the drop down filter
-    private async DoBacklogSelect(backlog:string)
+    private async doBacklogSelect(backlog:string)
     {
 
         this.setState({loadingWorkItems:true,categories:this.getInitializedCategoryInfo()});
@@ -386,18 +386,18 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                     }
                 });
             }
-            let workItemTypes:string[] = this.GetWorkItemTypesForBacklog(backlogLevelConfig)
+            let workItemTypes:string[] = this.getWorkItemTypesForBacklog(backlogLevelConfig)
             this.setState({backlogLevelConfig: backlogLevelConfig, backlogWorkItemTypes:workItemTypes});
-            await this.DoGetData(workItemTypes,this.state.dateOffset, this.state.tagExclusions);
+            await this.doGetData(workItemTypes,this.state.dateOffset, this.state.tagExclusions);
             
         }
         this.setState({loadingWorkItems:false,categories:this.getInitializedCategoryInfo()});
-        this.DoGetTrendData();
+        this.doGetTrendData();
     }
 
 
     //Takes the backlog configuration information and returns the names of the Work Item types that are a part of the chosen backlog (User Story, PBI, Bug, Feature, Epic.. )
-    private GetWorkItemTypesForBacklog(levelConfig:BacklogLevelConfiguration):string[]
+    private getWorkItemTypesForBacklog(levelConfig:BacklogLevelConfiguration):string[]
     {
         let result:string[] = [];
 
@@ -415,7 +415,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
 
     //activities to take when the user selects that date range from the filter bar
-    private async DoDateSelect(dateOffset:number)
+    private async doDateSelect(dateOffset:number)
     {
         this.setState({loadingWorkItems:true});
 
@@ -426,22 +426,22 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
             if(this.state.backlogLevelConfig != undefined)
             {
                 let c:BacklogLevelConfiguration = this.state.backlogLevelConfig;
-                backlogWorkItemTypes =  this.GetWorkItemTypesForBacklog(c);
+                backlogWorkItemTypes =  this.getWorkItemTypesForBacklog(c);
             }
-            await this.DoGetData(backlogWorkItemTypes,dateOffset, this.state.tagExclusions);
+            await this.doGetData(backlogWorkItemTypes,dateOffset, this.state.tagExclusions);
         }
         this.setState({dateOffset:dateOffset, loadingWorkItems:false});
     }
 
     ///
-    private async DoTagFilter()
+    private async doTagFilter()
     {
         this.setState({loadingWorkItems:true});
         let tagList:string[] = [];
         try
         {
-            tagList = this.SplitTagsValue(this.tagListObservable.value);                    
-            await this.DoGetData(this.state.backlogWorkItemTypes, this.state.dateOffset, tagList);
+            tagList = this.splitTagsValue(this.tagListObservable.value);                    
+            await this.doGetData(this.state.backlogWorkItemTypes, this.state.dateOffset, tagList);
         }
         catch(e) 
         {
@@ -458,9 +458,9 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     }
 
 
-    private async DoGetTrendData()
+    private async doGetTrendData()
     {
-        let oneYearWorkItems:WorkItemReference[] = await this.GetHistoricalTrendWorkItems();
+        let oneYearWorkItems:WorkItemReference[] = await this.getHistoricalTrendWorkItems();
 
         
         let slices:TrendSlice.IDurationSlice[] = await TrendSlice.GetWorkItemDurationSlices(oneYearWorkItems, getClient(WorkItemTrackingRestClient), this.state.projectName);
@@ -470,29 +470,29 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     }
 
     //Coordinates the calls to get the Work Item data from ADO and then calls to perform processing and calculations against that information for display and charting
-    private async DoGetData(backlogWorkItemTypes:string[], offsetDays:number, tagList:string[])
+    private async doGetData(backlogWorkItemTypes:string[], offsetDays:number, tagList:string[])
     {
         
-        let workItemsToCalculate:WorkItemReference[] = await this.GetWorkItemsByQuery(backlogWorkItemTypes, offsetDays, tagList);
-        let workItemsHistory:workItemInterfaces.IWorkItemWithHistory[] = await this.GetAllWorkItemsHistory(this.getWorkItemIDsForRefs(workItemsToCalculate));
-        let calculatedData:workItemInterfaces.IWorkItemStateHistory[] =  this.CalculateBoardColumnTime(workItemsHistory);
-        let boardColumns:workItemInterfaces.IBoardColumnStat[] = this.GatherDistinctBoardColumns(calculatedData);
-        this.CalculateBoardColumnAverages(boardColumns);
+        let workItemsToCalculate:WorkItemReference[] = await this.getWorkItemsByQueryInternal(backlogWorkItemTypes, offsetDays, tagList);
+        let workItemsHistory:workItemInterfaces.IWorkItemWithHistory[] = await this.getAllWorkItemsHistory(this.getWorkItemIDsForRefs(workItemsToCalculate));
+        let calculatedData:workItemInterfaces.IWorkItemStateHistory[] =  this.calculateBoardColumnTime(workItemsHistory);
+        let boardColumns:workItemInterfaces.IBoardColumnStat[] = this.gatherDistinctBoardColumns(calculatedData);
+        this.calculateBoardColumnAverages(boardColumns);
         this.setState({boardColumnData:boardColumns});
-        this.CollectAllWorkItemRevisionForTable(calculatedData);
-        this.ReDoCategoryCalcs(this.state.categories);
-        //this.DoGetTrendData();
+        this.collectAllWorkItemRevisionForTable(calculatedData);
+        this.reDoCategoryCalcs(this.state.categories);
+        //this.doGetTrendData();
     }
 
 
-    private async GetHistoricalTrendWorkItems(): Promise<WorkItemReference[]>
+    private async getHistoricalTrendWorkItems(): Promise<WorkItemReference[]>
     {
         let backlogWorkItemTypes:string[] = this.state.backlogWorkItemTypes;
         let offsetDays:number = 365;
         let tagList = this.state.tagExclusions;
         return new Promise<WorkItemReference[]>(async (resolve, reject) => { 
             try {
-                let workItemsToCalculate:Promise<WorkItemReference[]> = this.GetWorkItemsByQuery(backlogWorkItemTypes, offsetDays, tagList);
+                let workItemsToCalculate:Promise<WorkItemReference[]> = this.getWorkItemsByQueryInternal(backlogWorkItemTypes, offsetDays, tagList);
                 resolve(workItemsToCalculate);
             }
             catch 
@@ -506,7 +506,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
 
     //takes the array of categories (wait, work, not set) and executes the calls to re-calculate.  As items are changed by the user this function will be called to make sure that the calculated values are correct
-    private ReDoCategoryCalcs(categoryInfo: ICategory[])
+    private reDoCategoryCalcs(categoryInfo: ICategory[])
     {
         let waitCat:ICategory | undefined = categoryInfo.find(c => c.categoryName == WAIT_CAT_NAME);
         let workCat:ICategory | undefined = categoryInfo.find(c => c.categoryName == WORK_CAT_NAME);
@@ -514,15 +514,15 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
         if(waitCat)
         {
-            waitCat.stats= this.CalculateCategoryColumnAverages(waitCat);
+            waitCat.stats= this.calculateCategoryColumnAverages(waitCat);
         }
         if(workCat)
         {
-            workCat.stats = this.CalculateCategoryColumnAverages(workCat);
+            workCat.stats = this.calculateCategoryColumnAverages(workCat);
         }
         if(notSetCat)
         {
-            notSetCat.stats = this.CalculateCategoryColumnAverages(notSetCat);
+            notSetCat.stats = this.calculateCategoryColumnAverages(notSetCat);
         }
 
         this.setState({categories:categoryInfo});
@@ -531,12 +531,12 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
     // GEts the list of Board Columns that were found in the work item history for the work items we are looking at.  
     // We get the board column list this way instead of calling ADO to get the Team's current set of board columns because the columns may have been altered.. but we still want to be able to represent this history properly
-    private GatherDistinctBoardColumns(workItemData:workItemInterfaces.IWorkItemStateHistory[]):workItemInterfaces.IBoardColumnStat[]
+    private gatherDistinctBoardColumns(workItemData:workItemInterfaces.IWorkItemStateHistory[]):workItemInterfaces.IBoardColumnStat[]
     {
         let result:workItemInterfaces.IBoardColumnStat[] = [];
 
 
-        let outgoingColumns = this.GetOutgoingBoardColumns();
+        let outgoingColumns = this.getOutgoingBoardColumns();
 
         workItemData.forEach((thisWorkItem)=>{
 
@@ -553,7 +553,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                     
                     if(resultBoardColumn == undefined)                
                     {
-                        let newBoardColumn:workItemInterfaces.IBoardColumnStat = {boardColumn:thisWIRev.boardColumn, average:0,stdDev:0, total:0, workItemTimes:[], category:this.GetBoardColumnCategory(thisWIRev.boardColumn)};
+                        let newBoardColumn:workItemInterfaces.IBoardColumnStat = {boardColumn:thisWIRev.boardColumn, average:0,stdDev:0, total:0, workItemTimes:[], category:this.getBoardColumnCategory(thisWIRev.boardColumn)};
                         result.push(newBoardColumn);
                         resultBoardColumn = newBoardColumn;
                     }
@@ -579,19 +579,19 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
 
     //Give a board column name this will return then Enum value for the category that it has been assigned to
-    private GetBoardColumnCategory(boardColumnName:string):workItemInterfaces.columnCategoryChoices
+    private getBoardColumnCategory(boardColumnName:string):workItemInterfaces.columnCategoryChoices
     {
         let result:workItemInterfaces.columnCategoryChoices = workItemInterfaces.columnCategoryChoices.NotSet;
         try {
-            if(this.GetWorkItemCategory(WORK_CAT_NAME).boardColumnNames.find(c=>c == boardColumnName))
+            if(this.getWorkItemCategory(WORK_CAT_NAME).boardColumnNames.find(c=>c == boardColumnName))
             {
                 result = workItemInterfaces.columnCategoryChoices.Work;
             }
-            else if(this.GetWorkItemCategory(WAIT_CAT_NAME).boardColumnNames.find(c=>c == boardColumnName))
+            else if(this.getWorkItemCategory(WAIT_CAT_NAME).boardColumnNames.find(c=>c == boardColumnName))
             {
                 result = workItemInterfaces.columnCategoryChoices.Wait;
             }
-            else if(this.GetWorkItemCategory(NOT_SET_NAME).boardColumnNames.find(c=> c == boardColumnName))
+            else if(this.getWorkItemCategory(NOT_SET_NAME).boardColumnNames.find(c=> c == boardColumnName))
             {
                 result = workItemInterfaces.columnCategoryChoices.NotSet;
             }
@@ -606,7 +606,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
 
     //calculates average and Std Dev for the workitems for a given set of stats.  Used to calculate those metrics for a given board column
-    private CalculateBoardColumnAverages(boardColumnData:workItemInterfaces.IBoardColumnStat[])
+    private calculateBoardColumnAverages(boardColumnData:workItemInterfaces.IBoardColumnStat[])
     {
         boardColumnData.forEach((thisColumn)=>{
             let totalTime:number = 0;
@@ -622,7 +622,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
 
     //Given one of the categories (Wait, work, Not Set) this will work to process the info and calculate the Averages for that entire category
-    private CalculateCategoryColumnAverages(category:ICategory):workItemInterfaces.IBoardColumnStat
+    private calculateCategoryColumnAverages(category:ICategory):workItemInterfaces.IBoardColumnStat
     {
         let result:workItemInterfaces.IBoardColumnStat = {boardColumn:"", average:0,stdDev:0, total:0, workItemTimes:[],category:category.categoryType};
 
@@ -655,7 +655,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         return result;
     }
 
-    private GetCategoryChoiceForName(categoryName:string):workItemInterfaces.columnCategoryChoices
+    private getCategoryChoiceForName(categoryName:string):workItemInterfaces.columnCategoryChoices
     {
         let result:workItemInterfaces.columnCategoryChoices = workItemInterfaces.columnCategoryChoices.NotSet;
 
@@ -704,14 +704,14 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
     //Takes in the list of Work Item history we have after we selected down to the the closed Work Items for the team, and then we will call Azure DevOps to 
     // get all of the revision history for each work Item.
-    private async GetAllWorkItemsHistory(workItemIds: number[]): Promise<workItemInterfaces.IWorkItemWithHistory[]>
+    private async getAllWorkItemsHistory(workItemIds: number[]): Promise<workItemInterfaces.IWorkItemWithHistory[]>
     {
         let workItemRevPromises:Promise<WorkItem[]>[] = [];        
         return new Promise<workItemInterfaces.IWorkItemWithHistory[]>(async (resolve, reject) => { 
             try{ 
                 let returnResult:workItemInterfaces.IWorkItemWithHistory[] = [];
                 workItemIds.forEach((thisWI) => {
-                    let thisPromise:Promise<WorkItem[]> = this.GetWorkItemWithHistory(thisWI);
+                    let thisPromise:Promise<WorkItem[]> = this.getWorkItemWithHistory(thisWI);
                     
                     
                     workItemRevPromises.push(thisPromise);
@@ -727,11 +727,11 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                 //await allResults.forEach(async (thisResult)=>  {
                     
                     //create a new record for us to keep score with
-                    //let thisWIPromise:Promise<WorkItem> = this.GetWorkItemDetails(thisResult[0].id);
+                    //let thisWIPromise:Promise<WorkItem> = this.getWorkItemDetails(thisResult[0].id);
                     let thisWorkItemDetails:workItemInterfaces.IWorkItemWithHistory = {id:thisResult[0].id, title:thisResult[0].fields["System.Title"],  history:[], htmlLink:""};
                     
                     //now inside The results for THIS work item, lets go through the collection of revisions
-                    this.ProcessWorkItemHistory(thisResult, thisWorkItemDetails);
+                    this.processWorkItemHistory(thisResult, thisWorkItemDetails);
                     //let wiDetail:WorkItem = await thisWIPromise;
                     //try{
                     //    thisWorkItemDetails.htmlLink =  wiDetail._links["html"].href;                
@@ -755,7 +755,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     }
 
     ///
-    private ProcessWorkItemHistory(thisResult: WorkItem[], thisWorkItemDetails: workItemInterfaces.IWorkItemWithHistory) {
+    private processWorkItemHistory(thisResult: WorkItem[], thisWorkItemDetails: workItemInterfaces.IWorkItemWithHistory) {
         thisResult.forEach((wi) => {
 
             if (wi.fields["System.BoardColumn"] == undefined || wi.fields["System.BoardColumn"] == "") {
@@ -779,7 +779,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     }
 
     //Gets the Revision history for a given work item
-    private async GetWorkItemWithHistory(workItemID:number) : Promise<WorkItem[]>
+    private async getWorkItemWithHistory(workItemID:number) : Promise<WorkItem[]>
     {
         const client = getClient(WorkItemTrackingRestClient);
         
@@ -787,7 +787,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     }
 
 
-    private async GetWorkItemDetails(workItemID:number) : Promise<WorkItem>
+    private async getWorkItemDetails(workItemID:number) : Promise<WorkItem>
     {
         const client = getClient(WorkItemTrackingRestClient);
         
@@ -797,7 +797,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
 
     //Take the items we have collected and calculated and put them in an object that we can use to display the results on a table on the screen
-    private CollectAllWorkItemRevisionForTable(history:workItemInterfaces.IWorkItemStateHistory[])
+    private collectAllWorkItemRevisionForTable(history:workItemInterfaces.IWorkItemStateHistory[])
     {
         
         let revs:workItemInterfaces.IWorkItemTableDisplay[] = [];
@@ -818,7 +818,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
 
     //take the list of Work Item with revisions that we've collected and now lets' iterate through and calculate the time that the work item has been in that board column
-    private CalculateBoardColumnTime(data:workItemInterfaces.IWorkItemWithHistory[]):workItemInterfaces.IWorkItemStateHistory[]
+    private calculateBoardColumnTime(data:workItemInterfaces.IWorkItemWithHistory[]):workItemInterfaces.IWorkItemStateHistory[]
     { 
         let result:workItemInterfaces.IWorkItemStateHistory[] = [];
         let currentDate = new Date();
@@ -854,27 +854,19 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
     }
     
-    //Day drop down select
-    private SelectDays = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) => {
+  // Event handlers for dropdown selections
+  private selectDays = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>): void => {
+    const days = Number.parseInt(item.id);
+    this.doDateSelect(days);
+  };
 
-        let d:number = Number.parseInt(item.id);
+  private selectTeam = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>): void => {
+    this.doTeamSelect(item.id);
+  };
 
-        this.DoDateSelect(d);
-    };
-
-
-    ///Team drop down Selection
-    private  selectTeam = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) =>{
-
-
-        this.DoTeamSelect(item.id);
-
-    }
-
-    // Backlog drop down select
-    private selectBacklog = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) =>{
-        this.DoBacklogSelect(item.id);
-    }
+  private selectBacklog = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>): void => {
+    this.doBacklogSelect(item.id);
+  };
 
 
     //
@@ -942,7 +934,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
                     }
                 }
             }
-            this.ReDoCategoryCalcs(categoryInfo);
+            this.reDoCategoryCalcs(categoryInfo);
 
             this.setState({boardColumnData:boardColumnData});
 
@@ -958,7 +950,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     }
 
 
-    private CalculateFlowEfficeincy(waitTimeInfo:ICategory, workTimeInfo:ICategory):number
+    private calculateFlowEfficiency(waitTimeInfo:ICategory, workTimeInfo:ICategory):number
     {
         let result:number = 0;
         let totalTime:number = waitTimeInfo.stats.total + workTimeInfo.stats.total;
@@ -971,7 +963,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
     }
 
 
-    private GetWorkItemCategory(categoryName:string):ICategory
+    private getWorkItemCategory(categoryName:string):ICategory
     {
         let result:ICategory = { categoryName:"",boardColumnNames:[], categoryType:workItemInterfaces.columnCategoryChoices.NotSet, stats:{boardColumn:"",average:0, stdDev:0,  total:0, workItemTimes:[],category:workItemInterfaces.columnCategoryChoices.NotSet}};
 
@@ -1029,7 +1021,7 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
 
     private tagButtonClick = () => {
 
-        this.DoTagFilter();
+        this.doTagFilter();
         
     }
 
@@ -1118,16 +1110,16 @@ class WorkItemTimeContent extends React.Component<{}, IWorkItemTimeContentState>
         let selection = new ListSelection(true);        
         let tableItems = new ArrayItemProvider<workItemInterfaces.IWorkItemTableDisplay>(this.state.workItemRevTableData);
         let boardColumnList = new ArrayItemProvider<workItemInterfaces.IBoardColumnStat>(this.state.boardColumnData);
-        let workCategoryInfo = this.GetWorkItemCategory(WORK_CAT_NAME);
-        let waitCategoryInfo = this.GetWorkItemCategory(WAIT_CAT_NAME);
-        let notSetCategoryInfo = this.GetWorkItemCategory(NOT_SET_NAME);
+        let workCategoryInfo = this.getWorkItemCategory(WORK_CAT_NAME);
+        let waitCategoryInfo = this.getWorkItemCategory(WAIT_CAT_NAME);
+        let notSetCategoryInfo = this.getWorkItemCategory(NOT_SET_NAME);
         let workAvgTime:TimeCalc.IDuration = TimeCalc.getMillisecondsToTime(workCategoryInfo.stats.average);
         let waitAvgTime:TimeCalc.IDuration = TimeCalc.getMillisecondsToTime(waitCategoryInfo.stats.average);
         let timeBarData:IBarChartData = GetWaitWorkBarChartData(waitCategoryInfo.stats.average,workCategoryInfo.stats.average);
         let timeWILineData:IBarChartData = GetWorkWaitTimeItemLineChart(this.state.workItemClosedSlices);
         let effLineData:IBarChartData = GetEfficiencyLineChart(this.state.workItemClosedSlices);
         let pieChartData:IChartData = GetWaitWorkPieChartData(waitCategoryInfo.stats.total, workCategoryInfo.stats.total,notSetCategoryInfo.stats.total);
-        let flowEfficiency:string = (this.CalculateFlowEfficeincy(waitCategoryInfo, workCategoryInfo) * 100).toFixed(2).toString();
+        let flowEfficiency:string = (this.calculateFlowEfficiency(waitCategoryInfo, workCategoryInfo) * 100).toFixed(2).toString();
 
 
         if(this.state.teamBacklogConfig) {requirementName = this.state.teamBacklogConfig.requirementBacklog.name;}

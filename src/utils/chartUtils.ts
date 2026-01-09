@@ -157,3 +157,106 @@ export const getWaitWorkPieChartData = (
     datasets: [data],
   };
 };
+
+/**
+ * Generates line chart showing wait and work time trends over slices
+ * @param slices - Array of duration slices
+ * @returns Chart data for line chart
+ */
+export const getWorkWaitTimeItemLineChart = (slices: any[]): IBarChartData => {
+  const waitDataset: ILineChartDataset = {
+    type: "line",
+    label: "Wait Time",
+    backgroundColor: RUNNING_AVERAGE_CHART_COLOR,
+    borderColor: WAIT_COLUMN_COLOR,
+    data: [],
+    fill: false,
+  };
+
+  const workDataset: ILineChartDataset = {
+    type: "line",
+    label: "Work Time",
+    backgroundColor: RUNNING_AVERAGE_CHART_COLOR,
+    borderColor: WORK_COLUMN_COLOR,
+    data: [],
+    fill: false,
+  };
+
+  const labels: string[] = [];
+
+  slices.forEach((slice) => {
+    labels.push(slice.startDate.toLocaleDateString());
+    const waitTimeDays = millisecondsToDays(slice.totWaitTime);
+    const workTimeDays = millisecondsToDays(slice.totWorkTime);
+    waitDataset.data.push(waitTimeDays);
+    workDataset.data.push(workTimeDays);
+  });
+
+  return {
+    labels,
+    datasets: [waitDataset, workDataset],
+  };
+};
+
+/**
+ * Generates efficiency trend chart showing flow efficiency over time
+ * @param slices - Array of duration slices
+ * @returns Chart data for efficiency trend
+ */
+export const getEfficiencyLineChart = (slices: any[]): IBarChartData => {
+  const runningDataset: ILineChartDataset = {
+    type: "line",
+    label: "Running Efficiency",
+    backgroundColor: RUNNING_AVERAGE_CHART_COLOR,
+    borderColor: WORK_COLUMN_COLOR,
+    data: [],
+    fill: false,
+  };
+
+  const sliceDataset: ILineChartDataset = {
+    type: "line",
+    label: "Efficiency In This 2 weeks",
+    backgroundColor: RUNNING_AVERAGE_CHART_COLOR,
+    borderColor: WAIT_COLUMN_COLOR,
+    data: [],
+    fill: false,
+  };
+
+  const labels: string[] = [];
+  let runningWorkTotal = 0;
+  let runningWaitTotal = 0;
+
+  // Sort slices by date
+  const sortedSlices = [...slices].sort((a, b) => {
+    if (a.startDate < b.startDate) return -1;
+    if (a.startDate > b.startDate) return 1;
+    return 0;
+  });
+
+  sortedSlices.forEach((slice) => {
+    labels.push(slice.startDate.toLocaleDateString());
+
+    // Calculate efficiency for this slice
+    const totalTime = slice.totWorkTime + slice.totWaitTime;
+    const sliceEfficiency =
+      totalTime > 0
+        ? parseFloat(((slice.totWorkTime / totalTime) * 100).toFixed(2))
+        : 0;
+    sliceDataset.data.push(sliceEfficiency);
+
+    // Calculate running efficiency
+    runningWorkTotal += slice.totWorkTime;
+    runningWaitTotal += slice.totWaitTime;
+    const runningTotal = runningWorkTotal + runningWaitTotal;
+    const runningEfficiency =
+      runningTotal > 0
+        ? parseFloat(((runningWorkTotal / runningTotal) * 100).toFixed(2))
+        : 0;
+    runningDataset.data.push(runningEfficiency);
+  });
+
+  return {
+    labels,
+    datasets: [sliceDataset, runningDataset],
+  };
+};
